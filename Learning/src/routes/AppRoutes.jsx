@@ -12,6 +12,7 @@ import ProgressBar from "../components/ProgressBar";
 import ExamPage from "../pages/ExamPage";
 import NotFound from "../pages/NotFound";
 import ChatBox from "../components/ChatBox"; // 🟢 Import ChatBox
+import Contact from "../pages/Contact";
 
 export default function AppRoutes() {
   return (
@@ -23,6 +24,7 @@ export default function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/about" element={<About />} />
+        <Route path = "/contact" element={<Contact/>} />
         <Route path="/youtube" element={<YoutubeFetcher />} />
         <Route path="/progressbar" element={<ProgressBar />} />
         <Route path="/dashboard" element={<Dashboard />} />

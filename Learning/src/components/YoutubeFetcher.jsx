@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
+import Navbar from "./Navbar"; // Import the Navbar component
 import "../styles/YouTubeFetcher.css";
 
 const YouTubeFetcher = () => {
@@ -21,7 +22,6 @@ const YouTubeFetcher = () => {
       });
       console.log("API Response:", res.data); // Log the response for debugging
 
-      // Expected response: { videos: [...], nextPageToken: "..." }
       const fetchedVideos = res?.data?.videos;
       if (Array.isArray(fetchedVideos)) {
         setVideos((prev) => [...prev, ...fetchedVideos]);
@@ -65,6 +65,7 @@ const YouTubeFetcher = () => {
 
   return (
     <div className="youtube-fetcher" ref={containerRef}>
+      {/* <Navbar /> Include the Navbar */}
       <h2>YouTube Videos</h2>
       <div className="search-container">
         <input

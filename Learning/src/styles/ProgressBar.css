@@ -1,24 +1,163 @@
+/* ProgressBar.css */
 .progress-container {
-  margin-bottom: 20px;
-  width: 100%;
+  max-width: 400px;
+  margin: 1rem auto;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.progress-header h3 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.module-status {
+  font-weight: bold;
+  color: #3498db;
+}
+
+.progress-display {
+  margin: 1.5rem 0;
 }
 
 .progress-label {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 0.5rem;
   font-weight: 500;
-  margin-bottom: 5px;
+}
+
+.progress-label span {
+  color: #2c3e50;
+  font-weight: bold;
 }
 
 .progress-bar {
-  background-color: #e5e7eb;
-  height: 12px;
+  height: 20px;
+  background-color: #e9ecef;
   border-radius: 10px;
   overflow: hidden;
 }
 
 .progress-fill {
-  background-color: #3b82f6;
   height: 100%;
-  transition: width 0.4s ease-in-out;
+  background-color: #3498db;
+  transition: width 0.3s ease;
+}
+
+.module-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.module-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background-color: #3498db;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.module-btn:hover:not(:disabled) {
+  background-color: #2980b9;
+}
+
+.module-btn:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.module-count {
+  font-size: 1.5rem;
+  font-weight: bold;
+  min-width: 50px;
+  text-align: center;
+}
+
+.exam-section {
+  margin: 1.5rem 0;
+}
+
+.exam-score {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.exam-score input {
+  padding: 0.5rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  width: 60px;
+}
+
+.retake-check {
+  margin-top: 0.5rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.submit-btn, .reset-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submit-btn {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: #27ae60;
+}
+
+.submit-btn:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.reset-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.reset-btn:hover {
+  background-color: #c0392b;
+}
+
+.results {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: #e8f4fd;
+  border-radius: 5px;
+}
+
+.retake-warning {
+  color: #e74c3c;
+  font-weight: bold;
 }

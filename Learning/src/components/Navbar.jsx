@@ -28,16 +28,32 @@ export default function Navbar() {
 
       {/* Sidebar */}
       <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-        <button className="close-btn" onClick={toggleSidebar}>×</button>
+        <button className="close-btn" onClick={toggleSidebar}>
+          ×
+        </button>
         <ul>
-          <li><Link to="/notes">Notes & Organizer</Link></li>
-          <li><Link to="/youtube">YouTube Section</Link></li>
-          <li><Link to="/courses">Free Courses</Link></li>
+          <li>
+            <Link to="/notes">Notes & Organizer</Link>
+          </li>
+          <li>
+            <Link to="/youtube">YouTube Section</Link>
+          </li>
+          <li>
+            <Link to="/courses">Free Courses</Link>
+          </li>
+          <li>
+            <Link to="/exam">Exam</Link>
+          </li>
+          <li>
+            <Link to="/progressbar">Progress Bar</Link>
+          </li>
         </ul>
       </div>
 
       {/* Backdrop */}
-      {sidebarOpen && <div className="backdrop active" onClick={toggleSidebar}></div>}
+      {sidebarOpen && (
+        <div className="backdrop active" onClick={toggleSidebar}></div>
+      )}
     </>
   );
 }

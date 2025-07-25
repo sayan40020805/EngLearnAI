@@ -1,0 +1,37 @@
+.exam-page {
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.exam-list {
+  list-style: none;
+  padding: 0;
+}
+
+.exam-card {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+  background-color: #f9f9f9;
+  box-shadow: 0px 1px 4px rgba(0,0,0,0.1);
+}
+
+.start-exam-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.start-exam-btn:hover {
+  background-color: #0056b3;
+}
+
+.exam-loading,
+.exam-error {
+  color: #555;
+  font-size: 1.1rem;
+}

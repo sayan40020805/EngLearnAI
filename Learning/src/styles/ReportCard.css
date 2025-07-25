@@ -1,0 +1,58 @@
+.report-card {
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  max-width: 400px;
+  margin: 12px auto;
+  transition: transform 0.2s;
+}
+
+.report-card:hover {
+  transform: translateY(-4px);
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.report-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #1f2937;
+}
+
+.grade {
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 8px;
+  color: white;
+}
+
+.grade.A {
+  background-color: #10b981; /* Green */
+}
+
+.grade.B {
+  background-color: #3b82f6; /* Blue */
+}
+
+.grade.C {
+  background-color: #facc15; /* Yellow */
+  color: #1f2937;
+}
+
+.grade.D,
+.grade.F {
+  background-color: #ef4444; /* Red */
+}
+
+.report-details p {
+  margin: 6px 0;
+  font-size: 0.95rem;
+  color: #4b5563;
+}

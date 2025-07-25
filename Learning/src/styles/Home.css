@@ -1,0 +1,72 @@
+body {
+  background-color: #0f0f0f;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.home-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3rem;
+  flex-wrap: wrap;
+  background-color: #0f0f0f;
+}
+
+.home-content {
+  flex: 1;
+  max-width: 50%;
+  color: #ffffff;
+}
+
+.home-image {
+  flex: 1;
+  max-width: 50%;
+  text-align: center;
+}
+
+.home-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  filter: drop-shadow(0 0 10px #87cefa); /* sky-blue glow */
+}
+
+.home-buttons {
+  margin-top: 20px;
+}
+
+.btn-primary {
+  background-color: #00bfff; /* Deep Sky Blue */
+  color: #0f0f0f;
+  padding: 12px 24px;
+  margin-right: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
+  transition: transform 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: scale(1.05);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #00bfff;
+  padding: 12px 24px;
+  border: 2px solid #00bfff;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 0 0 10px #00bfff;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-outline:hover {
+  background-color: #00bfff;
+  color: #0f0f0f;
+  transform: scale(1.05);
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Navbar from "./Navbar"; // Import the Navbar component
-import "../styles/YouTubeFetcher.css";
+import "../styles/YoutubeFetcher.css";
 
 const YouTubeFetcher = () => {
   const [videos, setVideos] = useState([]);

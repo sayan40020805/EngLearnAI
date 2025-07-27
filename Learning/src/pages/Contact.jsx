@@ -1,45 +1,46 @@
-import React from "react";
-import "../styles/Contact.css";
+import React from 'react';
+import "../styles/Contact.css"
+import { FaMapMarkerAlt, FaPhoneAlt, FaFax, FaEnvelope } from 'react-icons/fa';
 
-const Contact = () => {
+function Contact() {
   return (
-    <div className="contact-page">
-      <div className="contact-container">
-        <div className="contact-info">
-          <div className="info-box">
-            <i className="icon fas fa-map-marker-alt"></i>
-            <h3>OUR MAIN OFFICE</h3>
-            <p>SaltLake, Kolkata-700021<br />West Bengal, India</p>
-          </div>
-          <div className="info-box">
-            <i className="icon fas fa-phone"></i>
-            <h3>PHONE NUMBER</h3>
-            <p>+91 98833 83924<br />+91 70030 99216</p>
-          </div>
-          <div className="info-box">
-            <i className="icon fas fa-fax"></i>
-            <h3>FAX</h3>
-            <p>1-234-567-8900</p>
-          </div>
-          <div className="info-box">
-            <i className="icon fas fa-envelope"></i>
-            <h3>EMAIL</h3>
-            <p>hello@theme.com</p>
-          </div>
+    <div className="contact-container">
+      {/* Left Side - Info Cards */}
+      <div className="contact-info">
+        <div className="info-card">
+          <FaMapMarkerAlt className="icon" />
+          <h3>OUR MAIN OFFICE</h3>
+          <p>SoHo 94 Broadway St<br />New York, NY 1001</p>
         </div>
+        <div className="info-card">
+          <FaPhoneAlt className="icon" />
+          <h3>PHONE NUMBER</h3>
+          <p>234-9876-5400<br />888-0123-4567 (Toll Free)</p>
+        </div>
+        <div className="info-card">
+          <FaFax className="icon" />
+          <h3>FAX</h3>
+          <p>1-234-567-8900</p>
+        </div>
+        <div className="info-card">
+          <FaEnvelope className="icon" />
+          <h3>EMAIL</h3>
+          <p><a href="mailto:hello@theme.com">hello@theme.com</a></p>
+        </div>
+      </div>
 
-        <div className="contact-form">
-          <h2>Contact Us</h2>
-          <form>
-            <input type="text" placeholder="Enter your Name" required />
-            <input type="email" placeholder="Enter a valid email address" required />
-            <textarea placeholder="Your Message" rows="5"></textarea>
-            <button type="submit">SUBMIT</button>
-          </form>
-        </div>
+      {/* Right Side - Contact Form */}
+      <div className="contact-form">
+        <h2>Contact Us</h2>
+        <form>
+          <input type="text" placeholder="Enter your Name" required />
+          <input type="email" placeholder="Enter a valid email address" required />
+          <textarea placeholder="Your Message" rows="5" required></textarea>
+          <button type="submit">SUBMIT</button>
+        </form>
       </div>
     </div>
   );
-};
+}
 
 export default Contact;

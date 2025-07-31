@@ -38,7 +38,7 @@ body {
 }
 
 .info-card i {
-  font-size: 30px;
+  font-size: 60px; /* Increased icon size */
   color: #00a8b5;
   margin-bottom: 10px;
 }
@@ -57,10 +57,11 @@ body {
 }
 
 .icon {
-  font-size: 30px;
+  font-size: 60px; /* Increase this value as needed */
   color: #00a8b5;
   margin-bottom: 10px;
 }
+
 
 /* Right Side - Contact Form */
 .contact-form {

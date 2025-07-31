@@ -8,22 +8,22 @@ function Contact() {
       {/* Left Side - Info Cards */}
       <div className="contact-info">
         <div className="info-card">
-          <FaMapMarkerAlt className="icon" />
+          <FaMapMarkerAlt style={{ fontSize: "60px", color: "#00a8b5", marginBottom: "10px" }} />
           <h3>OUR MAIN OFFICE</h3>
           <p>SoHo 94 Broadway St<br />New York, NY 1001</p>
         </div>
         <div className="info-card">
-          <FaPhoneAlt className="icon" />
+          <FaPhoneAlt style={{ fontSize: "60px", color: "#00a8b5", marginBottom: "10px" }} />
           <h3>PHONE NUMBER</h3>
           <p>234-9876-5400<br />888-0123-4567 (Toll Free)</p>
         </div>
         <div className="info-card">
-          <FaFax className="icon" />
+          <FaFax style={{ fontSize: "60px", color: "#00a8b5", marginBottom: "10px" }} />
           <h3>FAX</h3>
           <p>1-234-567-8900</p>
         </div>
         <div className="info-card">
-          <FaEnvelope className="icon" />
+          <FaEnvelope style={{ fontSize: "60px", color: "#00a8b5", marginBottom: "10px" }} />
           <h3>EMAIL</h3>
           <p><a href="mailto:hello@theme.com">hello@theme.com</a></p>
         </div>

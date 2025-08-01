@@ -1,72 +1,82 @@
 /* YouTubeFetcher.css */
 .youtube-fetcher {
   padding: 2rem;
-  background-color: #f4f4f4; /* Light background for contrast */
-  min-height: 100vh; /* Ensure it takes full height */
+  background-color: #0f0f0f;
+  /* Changed to black */
+  min-height: 100vh;
 }
 
-h2{
-  color: #0f0f0f;
+h2 {
+  color: #00bfff;
+  /* Sky blue heading */
 }
 
 .search-container {
   display: flex;
-  width: 1200px;
+  width: 1680px;
   justify-content: center;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
 }
 
 .search-container input {
   padding: 0.5rem;
-  width: 300px; /* Fixed width for input */
-  border: 1px solid #ccc;
+  width: 600px;
+  max-width: 90%;
+  border: 1px solid #00bfff;
+  /* Sky blue border */
   border-radius: 4px;
-  /* color: #0f0f0f; */
+  background-color: #1a1a1a;
+  /* Darker input background */
+  color: #ffffff;
 }
 
 .search-container button {
   padding: 0.5rem 1rem;
   margin-left: 0.5rem;
-  background-color: #00bfff; /* Sky blue button */
-  color: white;
+  background-color: #00bfff;
+  color: black;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 10px #00bfff;
 }
 
 .search-container button:hover {
-  background-color: #009acd; /* Darker blue on hover */
+  background-color: #009acd;
+  box-shadow: 0 0 15px #00bfff;
 }
 
 .video-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid */
-  gap: 1rem; /* Space between video cards */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
 }
 
 .video-card {
-  background: white;
+  background: #1c1c1c;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  overflow: hidden; /* Prevent overflow */
+  box-shadow: 0 0 12px rgba(0, 191, 255, 0.2);
+  overflow: hidden;
 }
 
 .video-title {
   padding: 0.5rem;
   font-weight: bold;
   text-align: center;
+  color: #00bfff;
 }
 
 /* Navbar.css */
 .navbar {
   display: flex;
-  justify-content: space-between; /* Space between brand and links */
-  align-items: center; /* Center items vertically */
+  justify-content: space-between;
+  align-items: center;
   padding: 1rem 2rem;
-  background-color: #0f0f0f; /* Dark background */
+  background-color: #0f0f0f;
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 191, 255, 0.3); /* Subtle sky-blue glow at bottom */
+  box-shadow: 0 2px 8px rgba(0, 191, 255, 0.4);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -75,47 +85,47 @@ h2{
 .navbar-brand {
   font-size: 1.8rem;
   font-weight: bold;
-  color: #00bfff; /* Sky blue color for brand */
-  text-shadow: 0 0 8px rgba(0, 191, 255, 0.5); /* Softer glow effect */
-  transition: transform 0.3s ease; /* Add transition for hover effect */
+  color: #00bfff;
+  text-shadow: 0 0 10px #00bfff;
+  transition: transform 0.3s ease;
 }
 
 .navbar-brand:hover {
-  transform: scale(1.05); /* Slightly enlarge on hover */
+  transform: scale(1.05);
 }
 
 .navbar-links {
-  display: flex; /* Use flexbox for alignment */
-  gap: 1.5rem; /* Space between links */
-  list-style: none; /* Remove bullet points */
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
 }
 
 .navbar-links a {
-  color: #ffffff; /* White text color */
-  text-decoration: none; /* Remove underline */
-  font-weight: 500; /* Font weight */
-  position: relative; /* Position for the underline effect */
-  padding: 5px; /* Padding for clickable area */
-  transition: color 0.3s ease, transform 0.3s ease; /* Add transition for hover effect */
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  padding: 5px;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .navbar-links a::after {
   content: '';
-  position: absolute; /* Positioning for the underline */
+  position: absolute;
   left: 0;
-  bottom: -2px; /* Position the underline below the text */
-  width: 0%; /* Start with no width */
-  height: 2px; /* Height of the underline */
-  background-color: #00bfff; /* Sky blue underline */
-  transition: width 0.3s ease; /* Smooth transition for width */
-  box-shadow: 0 0 5px rgba(0, 191, 255, 0.5); /* Softer glow effect */
+  bottom: -2px;
+  width: 0%;
+  height: 2px;
+  background-color: #00bfff;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 6px #00bfff;
 }
 
 .navbar-links a:hover {
-  color: #00bfff; /* Change text color on hover */
-  transform: translateY(-2px); /* Slightly lift the link on hover */
+  color: #00bfff;
+  transform: translateY(-2px);
 }
 
 .navbar-links a:hover::after {
-  width: 100%; /* Expand underline on hover */
+  width: 100%;
 }

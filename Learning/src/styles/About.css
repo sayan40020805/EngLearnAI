@@ -1,51 +1,126 @@
+/* ============================
+   About.css - Dark Themed Styling
+=============================== */
+
+:root {
+  --bg-dark: #121212;
+  --bg-container: #1e1e1e;
+  --text-primary: #ffffff;
+  --text-secondary: #bbbbbb;
+  --accent-color: #1e90ff;
+  --border-radius: 8px;
+  --spacing-unit: 1rem;
+}
+
+/* ===== Container ===== */
 .about-container {
-  max-width: 100%;
-  margin: 150px;
-  padding: 30px;
-  background-color: #0c0d0e;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  border-radius: 12px;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  color: #e5e7eb; /* Light text for dark background */
-}
-
-.about-container h1 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  color: #60a5fa; /* Soft blue */
-  text-align: center;
-}
-
-.about-container p {
-  font-size: 1.1rem;
+  max-width: 1680px;
+  margin-top: 0 auto;
+  padding: var(--spacing-unit);
+  background-color: var(--bg-container);
+  color: var(--text-primary);
+  font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
   line-height: 1.6;
-  margin-bottom: 25px;
-  text-align: justify;
-  color: #d1d5db; /* Light gray for readability */
+}
+
+/* ===== Headings ===== */
+.about-container h1 {
+  padding-top: 90px;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-unit);
+  color: var(--text-primary);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .about-container h2 {
-  font-size: 1.8rem;
-  color: #93c5fd;
-  margin-bottom: 15px;
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--accent-color);
 }
 
+.about-container h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-top: var(--spacing-unit);
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+/* ===== Text & Paragraphs ===== */
+.about-container p {
+  margin-bottom: var(--spacing-unit);
+  color: var(--text-secondary);
+}
+
+/* ===== Lists ===== */
 .about-container ul {
-  list-style: none;
+  list-style-type: none;
   padding-left: 0;
+  margin-bottom: var(--spacing-unit);
 }
 
-.about-container li {
-  font-size: 1.1rem;
-  margin-bottom: 10px;
-  padding-left: 30px;
+.about-container ul li {
   position: relative;
-  color: #f3f4f6;
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
 }
 
-.about-container li::before {
-  content: "✔️";
+.about-container ul li::before {
+  content: "•";
   position: absolute;
   left: 0;
-  top: 0;
+  color: var(--accent-color);
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+  .about-container {
+    padding: 0.75rem;
+  }
+
+  .about-container h1 {
+    font-size: 1.75rem;
+  }
+
+  .about-container h2 {
+    font-size: 1.4rem;
+  }
+
+  .about-container p,
+  .about-container ul li {
+    font-size: 0.95rem;
+  }
+}
+
+/* ===== Utility Classes ===== */
+.text-muted {
+  color: var(--text-secondary) !important;
+}
+
+.no-margin-bottom {
+  margin-bottom: 0 !important;
+}
+
+/* ===== Print Style Override ===== */
+@media print {
+  .about-container {
+    background-color: white;
+    color: black;
+  }
+
+  .about-container h1,
+  .about-container h2,
+  .about-container h3 {
+    color: black;
+  }
+
+  .about-container p,
+  .about-container ul li {
+    color: #333;
+  }
 }

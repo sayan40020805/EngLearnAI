@@ -1,60 +1,35 @@
-// src/pages/Exam.jsx
-
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import "../styles/Exam.css"; // Optional styling file
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../styles/Exam.css';
 
 const Exam = () => {
-  const [exams, setExams] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchExams = async () => {
-      try {
-        const res = await axios.get("/api/exams"); // Update endpoint if needed
-        setExams(res.data);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to fetch exams.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchExams();
-  }, []);
-
-  if (loading) return <p>Loading exams...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  const handleStartExam = () => {
+    navigate('/exam');
+  };
 
   return (
     <div className="exam-container">
-      <h2>Upcoming Exams</h2>
-      {exams.length === 0 ? (
-        <p>No exams found.</p>
-      ) : (
-        <ul className="exam-list">
-          {exams.map((exam) => (
-            <li key={exam._id} className="exam-item">
-              <h3>{exam.courseName}</h3>
-              <p>
-                <strong>Date:</strong>{" "}
-                {new Date(exam.date).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Time:</strong> {exam.time}
-              </p>
-              <p>
-                <strong>Semester:</strong> {exam.semester}
-              </p>
-              <p>
-                <strong>Department:</strong> {exam.department}
-              </p>
-            </li>
-          ))}
-        </ul>
-      )}
+      <h2>Available Exams</h2>
+      <div className="exam-intro">
+        <p>Ready to test your knowledge? Our AI-powered exam system generates custom exams based on your selected subjects and difficulty level.</p>
+        
+        <div className="exam-features">
+          <h3>Features:</h3>
+          <ul>
+            <li>Custom subject selection</li>
+            <li>Adjustable difficulty levels (Easy, Medium, Hard)</li>
+            <li>Flexible question count (5-20 questions)</li>
+            <li>Instant scoring and detailed explanations</li>
+            <li>Progress tracking</li>
+          </ul>
+        </div>
+
+        <button onClick={handleStartExam} className="btn-primary">
+          Start Custom Exam
+        </button>
+      </div>
     </div>
   );
 };

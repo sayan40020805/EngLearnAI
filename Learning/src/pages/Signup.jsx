@@ -1,13 +1,13 @@
-// src/pages/Signup.jsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "../styles/Signup.css"; // Make sure you create and style this
+import { useNavigate, Link } from "react-router-dom";
+import "../styles/Signup.css";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
+    college: "",
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ const Signup = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Signup failed");
+        throw new Error(data.error || "Signup failed");
       }
 
       alert("Signup successful! Please log in.");
@@ -77,9 +77,21 @@ const Signup = () => {
           required
         />
 
+        <input
+          type="text"
+          name="college"
+          placeholder="College Name"
+          value={formData.college}
+          onChange={handleChange}
+          required
+        />
+
         <button type="submit">Sign Up</button>
 
         {error && <p className="error-message">{error}</p>}
+        <p className="login-link">
+          Already have an account? <Link to="/login">Login here</Link>
+        </p>
       </form>
     </div>
   );

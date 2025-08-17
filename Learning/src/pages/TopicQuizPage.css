@@ -1,0 +1,159 @@
+.quiz-page {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.quiz-stats {
+  display: flex;
+  gap: 2rem;
+  font-weight: 600;
+}
+
+.timer {
+  color: #dc3545;
+}
+
+.question-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.question-container h3 {
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.option:hover {
+  background: #f8f9fa;
+}
+
+.option input[type="radio"] {
+  margin-right: 0.5rem;
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+.nav-btn, .submit-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.nav-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.nav-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.submit-btn {
+  background: #28a745;
+  color: white;
+}
+
+.quiz-start {
+  max-width: 400px;
+  margin: 2rem auto;
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.start-btn {
+  background: #007bff;
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.quiz-results {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.score-display {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: #d4edda;
+  border-radius: 10px;
+}
+
+.results-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.result-item {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 5px;
+}
+
+.result-item h4 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.explanation {
+  background: #e9ecef;
+  padding: 0.5rem;
+  border-radius: 3px;
+  margin-top: 0.5rem;
+}
+
+.retry-btn {
+  background: #007bff;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 2rem;
+}

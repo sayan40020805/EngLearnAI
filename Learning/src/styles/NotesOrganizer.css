@@ -1,0 +1,207 @@
+.notes-organizer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.header-section h1 {
+  color: #333;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.breadcrumb {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.breadcrumb span {
+  margin: 0 0.5rem;
+}
+
+.tab-navigation {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.tab-button {
+  padding: 1rem 2rem;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.tab-button.active {
+  background: #667eea;
+  color: white;
+}
+
+.tab-button:hover {
+  background: #5a6fd8;
+  color: white;
+}
+
+.content-section h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+
+.files-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.file-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.file-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.file-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.file-card h3 {
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.file-size {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.download-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.download-btn:hover {
+  background: #5a6fd8;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 3rem;
+}
+
+.back-button, .home-button {
+  padding: 0.8rem 2rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.back-button:hover, .home-button:hover {
+  background: #5a6fd8;
+}
+
+/* New styles for NotesAndOrganizer component */
+.notes-organizer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.notes-organizer-container h1 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.notes-organizer-container p {
+  color: #7f8c8d;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.organizer-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.option-card {
+  background: white;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.option-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.option-card h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.option-card p {
+  color: #7f8c8d;
+  margin-bottom: 1.5rem;
+}
+
+.organizer-btn {
+  display: inline-block;
+  background: #3498db;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.organizer-btn:hover {
+  background: #2980b9;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .organizer-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .notes-organizer-container {
+    padding: 1rem;
+  }
+}

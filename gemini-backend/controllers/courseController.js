@@ -5,6 +5,7 @@ export const saveCourse = async (req, res) => {
   try {
     const { userId, title, videoId, channelTitle, thumbnail } = req.body;
 
+    
     const newCourse = new Course({
       userId,
       title,

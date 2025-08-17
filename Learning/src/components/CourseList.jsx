@@ -1,4 +1,4 @@
-// src/pages/CourseList.jsx
+// src/components/CourseList.jsx
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -12,7 +12,7 @@ const CourseList = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await axios.get("/api/courses"); // Adjust endpoint if needed
+        const res = await axios.get("http://localhost:5000/api/courses");
         setCourses(res.data);
       } catch (err) {
         console.error(err);
@@ -30,20 +30,32 @@ const CourseList = () => {
 
   return (
     <div className="course-list">
-      <h2>Available Courses</h2>
+      <h2>Free Courses</h2>
       {courses.length === 0 ? (
         <p>No courses available.</p>
       ) : (
         <ul>
           {courses.map((course) => (
-            <li key={course._id}>
-              <h3>{course.title}</h3>
+            <li key={course._id} className="course-item">
+              <h3>{course.courseCode} - {course.courseName}</h3>
               <p>{course.description}</p>
               <p>
                 <strong>Department:</strong> {course.department}
               </p>
               <p>
                 <strong>Semester:</strong> {course.semester}
+              </p>
+              <p>
+                <strong>Credits:</strong> {course.credits}
+              </p>
+              <p>
+                <strong>Instructor:</strong> {course.instructor}
+              </p>
+              <p>
+                <strong>Language:</strong> {course.language}
+              </p>
+              <p>
+                <strong>Difficulty:</strong> {course.difficulty}
               </p>
             </li>
           ))}

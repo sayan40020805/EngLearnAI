@@ -1,35 +1,231 @@
+/* Enhanced Dashboard Styles */
 .dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 2rem;
-  background-color: #f9f9f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   min-height: 100vh;
 }
 
-.user-info {
-  background-color: white;
-  padding: 1rem;
-  border-radius: 8px;
+.dashboard h1 {
+  color: #2c3e50;
+  text-align: center;
   margin-bottom: 2rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-size: 2.5rem;
+  font-weight: 300;
+  position: relative;
 }
 
-.user-info p {
+.dashboard h1::after {
+  content: '';
+  display: block;
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(90deg, #3498db, #2ecc71);
+  margin: 0.5rem auto;
+  border-radius: 2px;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1.2rem;
+  color: #3498db;
+}
+
+.dashboard-container {
+  display: grid;
+  gap: 2rem;
+}
+
+/* User Profile Section */
+.user-profile-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.user-profile-section h2 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 0.5rem;
+}
+
+.user-info-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  font-size: 2.5rem;
+  color: white;
+  font-weight: bold;
+}
+
+.user-details p {
   margin: 0.5rem 0;
+  font-size: 1.1rem;
+  color: #34495e;
 }
 
-button {
-  padding: 0.5rem 1rem;
-  background-color: #dc3545;
+.user-details strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* Exam History Section */
+.exam-history-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.exam-history-section h2 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 0.5rem;
+}
+
+.exam-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.exam-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 1.5rem;
+  border-radius: 10px;
+  border-left: 4px solid #3498db;
+  transition: all 0.3s ease;
+}
+
+.exam-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.exam-card h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+.exam-details p {
+  margin: 0.3rem 0;
+  color: #495057;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  margin-top: 1rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3498db, #2ecc71);
+  transition: width 0.3s ease;
+}
+
+.no-exams {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Quick Actions */
+.quick-actions {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.logout-btn {
+  background: #e74c3c;
   color: white;
   border: none;
-  border-radius: 4px;
+  padding: 0.75rem 2rem;
+  border-radius: 25px;
+  font-size: 1rem;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-button:hover {
-  background-color: #c82333;
+.logout-btn:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
 }
 
-.dashboard-content ul {
-  list-style-type: disc;
-  margin-left: 2rem;
+.not-logged-in {
+  text-align: center;
+  padding: 3rem;
+  color: #6c757d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem;
+  }
+  
+  .dashboard h1 {
+    font-size: 2rem;
+  }
+  
+  .user-info-card {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .user-avatar {
+    margin: 0 auto;
+  }
+  
+  .exam-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-profile-section,
+  .exam-history-section {
+    padding: 1rem;
+  }
+  
+  .exam-card {
+    padding: 1rem;
+  }
 }

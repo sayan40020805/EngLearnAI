@@ -6,9 +6,10 @@
   background-color: #0f0f0f;
   color: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 191, 255, 0.3);
-  position: sticky;
+  position: fixed;
   top: 0;
-  width: auto;
+  left: 0;
+  width: 100%;
   z-index: 1000;
 }
 
@@ -82,4 +83,9 @@
   .sidebar-toggle-btn {
     display: block;
   }
+}
+
+/* Add padding to body to prevent content overlap with fixed navbar */
+body {
+  padding-top: 80px;
 }

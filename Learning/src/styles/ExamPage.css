@@ -1,37 +1,132 @@
+/* Exam Page - Black Theme with Sky Blue Glow */
+:root {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #2a2a2a;
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --accent-sky: #00d4ff;
+  --accent-glow: #00a8cc;
+  --success: #00ff88;
+  --error: #ff4444;
+  --warning: #ffaa00;
+  --border-color: #333;
+  --shadow-glow: 0 0 20px rgba(0, 212, 255, 0.3);
+  --shadow-intense: 0 0 30px rgba(0, 212, 255, 0.5);
+}
+
 .exam-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
   padding: 2rem;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text-primary);
 }
 
 .exam-list {
   list-style: none;
   padding: 0;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .exam-card {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 1.2rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-glow);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.exam-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-intense);
+  border-color: var(--accent-sky);
+}
+
+.exam-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.exam-card p {
+  color: var(--text-secondary);
   margin-bottom: 1rem;
-  background-color: #f9f9f9;
-  box-shadow: 0px 1px 4px rgba(0,0,0,0.1);
+  line-height: 1.6;
 }
 
 .start-exam-btn {
-  background-color: #007bff;
-  color: white;
-  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, var(--accent-sky), var(--accent-glow));
+  color: var(--bg-primary);
+  padding: 0.8rem 2rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-glow);
 }
 
 .start-exam-btn:hover {
-  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-intense);
 }
 
 .exam-loading,
 .exam-error {
-  color: #555;
-  font-size: 1.1rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  padding: 2rem;
+}
+
+.exam-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.exam-loading::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0, 212, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--accent-sky);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .exam-page {
+    padding: 1rem;
+  }
+  
+  .exam-card {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .exam-page {
+    padding: 0.5rem;
+  }
+  
+  .exam-card {
+    padding: 1rem;
+    margin: 0.5rem;
+  }
 }

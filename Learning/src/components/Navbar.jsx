@@ -1,13 +1,19 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 import "../styles/Navbar.css";
 import "../styles/Sidebar.css";
 
 export default function Navbar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
+  };
+
+  const handleLogout = () => {
+    logout();
   };
 
   return (
@@ -21,8 +27,19 @@ export default function Navbar() {
           <Link to="/">Home</Link>
           <Link to="/about">About</Link>
           <Link to="/contact">Contact</Link>
-          <Link to="/login">Login</Link>
-          <Link to="/signup">Sign Up</Link>
+          {user ? (
+            <>
+              <Link to="/dashboard">Dashboard</Link>
+              <button className="logout-btn" onClick={handleLogout}>
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login">Login</Link>
+              <Link to="/signup">Sign Up</Link>
+            </>
+          )}
         </div>
       </nav>
 
@@ -47,6 +64,11 @@ export default function Navbar() {
           <li>
             <Link to="/progressbar">Progress Bar</Link>
           </li>
+          {user && (
+            <li>
+              <Link to="/dashboard">User Dashboard</Link>
+            </li>
+          )}
         </ul>
       </div>
 

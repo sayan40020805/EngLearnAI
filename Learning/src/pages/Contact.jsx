@@ -1,6 +1,6 @@
 import React from 'react';
 import "../styles/Contact.css"
-import { FaMapMarkerAlt, FaPhoneAlt, FaFax, FaEnvelope } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 
 function Contact() {
   return (
@@ -9,23 +9,18 @@ function Contact() {
       <div className="contact-info">
         <div className="info-card">
           <FaMapMarkerAlt style={{ fontSize: "60px", color: "#00a8b5", marginBottom: "10px" }} />
-          <h3>OUR MAIN OFFICE</h3>
-          <p>SoHo 94 Broadway St<br />New York, NY 1001</p>
+          <h3>OUR LOCATION</h3>
+          <p>Bally, West Bengal</p>
         </div>
         <div className="info-card">
           <FaPhoneAlt style={{ fontSize: "60px", color: "#00a8b5", marginBottom: "10px" }} />
           <h3>PHONE NUMBER</h3>
-          <p>234-9876-5400<br />888-0123-4567 (Toll Free)</p>
-        </div>
-        <div className="info-card">
-          <FaFax style={{ fontSize: "60px", color: "#00a8b5", marginBottom: "10px" }} />
-          <h3>FAX</h3>
-          <p>1-234-567-8900</p>
+          <p>+91 7003099216</p>
         </div>
         <div className="info-card">
           <FaEnvelope style={{ fontSize: "60px", color: "#00a8b5", marginBottom: "10px" }} />
           <h3>EMAIL</h3>
-          <p><a href="mailto:hello@theme.com">hello@theme.com</a></p>
+          <p><a href="mailto:ssayanmjhi204@gmail.com">ssayanmjhi204@gmail.com</a></p>
         </div>
       </div>
 

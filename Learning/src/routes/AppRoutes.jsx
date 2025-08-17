@@ -13,8 +13,18 @@ import ExamPage from "../pages/ExamPage";
 import NotFound from "../pages/NotFound";
 import ChatBox from "../components/ChatBox";
 import Contact from "../pages/Contact";
+import EnhancedCourseList from "../components/EnhancedCourseList";
+import CertificateCourseFinder from "../components/CertificateCourseFinder";
+import AllCourseList from "../components/AllCourseList";
+import UserProfile from "../pages/UserProfile";
+import StreamSelection from "../pages/StreamSelection";
+import SemesterSelection from "../pages/SemesterSelection";
+import SubjectSelection from "../pages/SubjectSelection";
+import NotesOrganizer from "../pages/NotesOrganizer";
+import NotesAndOrganizer from "../pages/NotesAndOrganizer";
 import "../index.css"; // Global styles
 import "../App.css";   // Optional App wrapper styling
+
 export default function AppRoutes() {
   return (
     <Router>
@@ -31,10 +41,19 @@ export default function AppRoutes() {
             <Route path="/youtube" element={<YoutubeFetcher />} />
             <Route path="/progressbar" element={<ProgressBar />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/courses/:department" element={<DepartmentCourses />} />
-            <Route path="/notes/:semester" element={<SemesterNotes />} />
-            <Route path="/exam" element={<ExamPage />} />
-            <Route path="*" element={<NotFound />} />
+          <Route path="/courses/:department" element={<DepartmentCourses />} />
+          <Route path="/notes/:semester" element={<SemesterNotes />} />
+          <Route path="/exam" element={<ExamPage />} />
+          <Route path="/enhanced-courses" element={<EnhancedCourseList />} />
+          <Route path="/certificate-courses" element={<CertificateCourseFinder />} />
+          <Route path="/courses" element={<AllCourseList />} />
+          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/stream-selection" element={<StreamSelection />} />
+          <Route path="/semester-selection/:streamId" element={<SemesterSelection />} />
+          <Route path="/subject-selection/:streamId/:semester" element={<SubjectSelection />} />
+          <Route path="/notes-organizer/:streamId/:semester/:subject" element={<NotesOrganizer />} />
+          <Route path="/notes" element={<NotesAndOrganizer />} />
+          <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </div>

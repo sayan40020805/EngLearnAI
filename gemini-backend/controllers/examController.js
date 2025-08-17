@@ -1,5 +1,4 @@
 import Exam from "../models/Exam.js";
-import Submission from "../models/Submission.js";
 
 // POST /api/exams/create
 export const createExam = async (req, res) => {
@@ -31,8 +30,22 @@ export const createExam = async (req, res) => {
   }
 };
 
+export const getExamById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const exam = await Exam.findById(id);
+    if (!exam) {
+      return res.status(404).json({ error: "Exam not found" });
+    }
+    res.status(200).json(exam);
+  } catch (err) {
+    console.error("Get exam by ID error:", err.message);
+    res.status(500).json({ error: "Failed to fetch exam" });
+  }
+};
+
 // GET /api/exams?department=CSE&semester=4
-export const getExams = async (req, res) => {
+export const getAllExams = async (req, res) => {
   try {
     const { department, semester } = req.query;
     const filter = {};

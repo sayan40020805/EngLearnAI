@@ -6,6 +6,13 @@ import mongoose from "mongoose";
 // Routes
 import geminiRoutes from "./routes/geminiRoutes.js";
 import youtubeRoutes from "./routes/youtubeRoutes.js";
+import enhancedCourseRoutes from "./routes/enhancedCourseRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import courseRoutes from "./routes/courseRoutes.js";
+import examRoutes from "./routes/examRoutes.js";
+import enhancedExamRoutes from "./routes/enhancedExamRoutes.js";
+import notesRoutes from "./routes/notesRoutes.js";
+import progressRoutes from "./routes/progressRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -36,10 +43,17 @@ connectDB(); // Call the DB connection function
 // Route Handlers
 app.use("/api/gemini", geminiRoutes);
 app.use("/api/youtube", youtubeRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/courses", courseRoutes);
+app.use("/api/exams", examRoutes);
+app.use("/api/enhanced-exams", enhancedExamRoutes);
+app.use("/api/notes", notesRoutes);
+app.use("/api/progress", progressRoutes);
+app.use("/api", enhancedCourseRoutes);
 
 // Root Route
 app.get("/", (req, res) => {
-  res.send("🎉 Welcome to the Backend API (Gemini + YouTube)");
+  res.send("🎉 Welcome to the Backend API (Gemini + YouTube + Enhanced Courses)");
 });
 
 // Optional Error Handler

@@ -1,11 +1,26 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import useScrollFadeIn from "../hooks/useScrollFadeIn";
 import "../styles/Home.css";
 import projectImage from "../assets/anime.jpg"; // sample image path
 
 const Home = () => {
+  const navigate = useNavigate();
   const fadeInLeft = useScrollFadeIn("left", 1, 0);
   const fadeInRight = useScrollFadeIn("right", 1, 0.3);
+
+  const handleGetStarted = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/dashboard');
+    } else {
+      navigate('/signup');
+    }
+  };
+
+  const handleLearnMore = () => {
+    navigate('/about');
+  };
 
   return (
     <div className="home-container">
@@ -16,8 +31,12 @@ const Home = () => {
           students learn and grow.
         </p>
         <div className="home-buttons">
-          <button className="btn-primary">Get Started</button>
-          <button className="btn-outline">Learn More</button>
+          <button className="btn-primary" onClick={handleGetStarted}>
+            Get Started
+          </button>
+          <button className="btn-outline" onClick={handleLearnMore}>
+            Learn More
+          </button>
         </div>
       </div>
       <div className="home-image" {...fadeInRight}>

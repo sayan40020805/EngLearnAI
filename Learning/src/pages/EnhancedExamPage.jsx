@@ -131,6 +131,9 @@ export default function EnhancedExamPage() {
 
       setResults(data);
       setExamStarted(false);
+      
+      // Trigger dashboard refresh
+      window.dispatchEvent(new CustomEvent('examSubmitted'));
     } catch (error) {
       console.error('Error submitting exam:', error);
       setError(error.message || 'Failed to submit exam. Please try again.');

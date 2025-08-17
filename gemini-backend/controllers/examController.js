@@ -1,4 +1,5 @@
 import Exam from "../models/Exam.js";
+import Submission from "../models/Submission.js";
 
 // POST /api/exams/create
 export const createExam = async (req, res) => {
@@ -81,5 +82,41 @@ export const submitExam = async (req, res) => {
   } catch (err) {
     console.error("Submit exam error:", err.message);
     res.status(500).json({ error: "Failed to submit exam" });
+  }
+};
+
+// GET /api/exams/user/:userId/history
+export const getUserExamHistory = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    const submissions = await Submission.find({ userId })
+      .populate('examId', 'title department semester')
+      .sort({ submittedAt: -1 });
+
+    // Format the submissions to match dashboard expectations
+    const formattedSubmissions = submissions.map(sub => ({
+      examName: sub.examId?.title || 'Traditional Exam',
+      marks: 0, // Traditional exams don't have automatic scoring
+      totalMarks: 100,
+      percentage: 0,
+      date: sub.submittedAt,
+      subject: sub.examId?.department || 'General',
+      type: 'traditional',
+      score: 0,
+      correctAnswers: 0,
+      totalQuestions: 0
+    }));
+
+    res.status(200).json({
+      success: true,
+      submissions: formattedSubmissions
+    });
+  } catch (err) {
+    console.error("Get user exam history error:", err.message);
+    res.status(500).json({ 
+      success: false,
+      error: `Failed to fetch exam history: ${err.message}` 
+    });
   }
 };

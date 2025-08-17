@@ -10,6 +10,7 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
@@ -20,17 +21,28 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
+    
     try {
       const res = await axios.post(
         "http://localhost:5000/api/auth/login",
         credentials
       );
-      login(res.data); // Store user in context and localStorage
+      
+      // Ensure we have the complete user data structure
+      const userData = {
+        ...res.data.user,
+        token: res.data.token
+      };
+      
+      login(userData);
       navigate("/dashboard");
     } catch (err) {
       setError(
         err.response?.data?.error || "Login failed. Please try again."
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,17 +66,16 @@ const Login = () => {
           onChange={handleChange}
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
         {error && <p className="error-message">{error}</p>}
         <p className="login-link">
           Don't have an account? <Link to="/signup">Sign up here</Link>
         </p>
       </form>
     </div>
-    
   );
 };
 
 export default Login;
-
-

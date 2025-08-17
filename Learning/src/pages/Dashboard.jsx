@@ -10,7 +10,103 @@ const Dashboard = () => {
   useEffect(() => {
     console.log("Dashboard - User object:", user);
     if (user) {
-      // Use user data from AuthContext directly
+      // Fetch both traditional and enhanced exam results
+      fetchUserExamResults();
+    } else {
+      setLoading(false);
+    }
+
+    // Listen for exam submission events
+    const handleExamSubmitted = () => {
+      console.log('Exam submitted, refreshing dashboard...');
+      fetchUserExamResults(true);
+    };
+
+    window.addEventListener('examSubmitted', handleExamSubmitted);
+    
+    return () => {
+      window.removeEventListener('examSubmitted', handleExamSubmitted);
+    };
+  }, [user]);
+
+  const fetchUserExamResults = async (refresh = false) => {
+    try {
+      const userId = user._id || user.user?._id || user.id;
+      if (!userId) {
+        setLoading(false);
+        return;
+      }
+
+      const allExams = [];
+      
+      // Fetch enhanced exam submissions
+      try {
+        const enhancedResponse = await fetch(`/api/enhanced-exams/user/${userId}/history`);
+        if (enhancedResponse.ok) {
+          const enhancedData = await enhancedResponse.json();
+          if (enhancedData.success && enhancedData.submissions) {
+            allExams.push(...enhancedData.submissions.map(sub => ({
+              examName: sub.examId?.title || 'Enhanced Exam',
+              marks: Math.round(sub.score || 0),
+              totalMarks: 100,
+              percentage: Math.round(sub.score || 0),
+              date: sub.submittedAt || new Date(),
+              type: 'enhanced',
+              subject: sub.examId?.subject || 'General'
+            })));
+          }
+        }
+      } catch (enhancedError) {
+        console.warn("Enhanced exam history fetch failed:", enhancedError);
+      }
+
+      // Fetch traditional exam results
+      try {
+        const traditionalResponse = await fetch(`/api/exams/user/${userId}/history`);
+        if (traditionalResponse.ok) {
+          const traditionalData = await traditionalResponse.json();
+          if (traditionalData.success && traditionalData.submissions) {
+            allExams.push(...traditionalData.submissions.map(sub => ({
+              examName: sub.examName || 'Traditional Exam',
+              marks: sub.marks || 0,
+              totalMarks: sub.totalMarks || 100,
+              percentage: Math.round((sub.marks || 0) / (sub.totalMarks || 100) * 100),
+              date: sub.date || new Date(),
+              type: 'traditional',
+              subject: sub.subject || 'General'
+            })));
+          }
+        }
+      } catch (traditionalError) {
+        console.warn("Traditional exam history fetch failed:", traditionalError);
+      }
+
+      // Also include any marks from user profile
+      const profileMarks = user.marks || user.user?.marks || [];
+      profileMarks.forEach(mark => {
+        if (!allExams.some(exam => exam.examName === mark.examName)) {
+          allExams.push({
+            ...mark,
+            type: 'profile',
+            percentage: Math.round((mark.marks / mark.totalMarks) * 100)
+          });
+        }
+      });
+
+      // Sort by date (newest first)
+      allExams.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      setUserData({
+        name: user.name || user.user?.name || '',
+        email: user.email || user.user?.email || '',
+        college: user.college || user.user?.college || '',
+        bio: user.bio || user.user?.bio || '',
+        marks: allExams,
+        profilePicture: user.profilePicture || user.user?.profilePicture || ''
+      });
+    } catch (error) {
+      console.error("Error fetching exam results:", error);
+      // Fallback to user profile data
       setUserData({
         name: user.name || user.user?.name || '',
         email: user.email || user.user?.email || '',
@@ -19,13 +115,10 @@ const Dashboard = () => {
         marks: user.marks || user.user?.marks || [],
         profilePicture: user.profilePicture || user.user?.profilePicture || ''
       });
-      setLoading(false);
-    } else {
+    } finally {
       setLoading(false);
     }
-  }, [user]);
-
-  // Removed fetchUserData function as we're using AuthContext data directly
+  };
 
   const handleLogout = () => {
     logout();
@@ -43,24 +136,24 @@ const Dashboard = () => {
     <div className="dashboard">
       <h1>Welcome to Your Dashboard</h1>
 
-      {userData ? (
+      {user ? (
         <div className="dashboard-container">
           {/* User Profile Section */}
           <div className="user-profile-section">
             <h2>User Profile</h2>
             <div className="user-info-card">
               <div className="user-avatar">
-                {userData.profilePicture ? (
+                {userData?.profilePicture ? (
                   <img src={userData.profilePicture} alt={userData.name} />
                 ) : (
-                  <div className="avatar-placeholder">{userData.name?.charAt(0).toUpperCase()}</div>
+                  <div className="avatar-placeholder">{userData?.name?.charAt(0).toUpperCase()}</div>
                 )}
               </div>
               <div className="user-details">
-                <p><strong>Name:</strong> {userData.name}</p>
-                <p><strong>Email:</strong> {userData.email}</p>
-                <p><strong>College:</strong> {userData.college}</p>
-                <p><strong>Bio:</strong> {userData.bio || "No bio added yet"}</p>
+                <p><strong>Name:</strong> {userData?.name}</p>
+                <p><strong>Email:</strong> {userData?.email}</p>
+                <p><strong>College:</strong> {userData?.college}</p>
+                <p><strong>Bio:</strong> {userData?.bio || "No bio added yet"}</p>
               </div>
             </div>
           </div>
@@ -68,7 +161,7 @@ const Dashboard = () => {
           {/* Exam History Section */}
           <div className="exam-history-section">
             <h2>Exam History</h2>
-            {userData.marks && userData.marks.length > 0 ? (
+            {userData?.marks && userData.marks.length > 0 ? (
               <div className="exam-cards">
                 {userData.marks.map((exam, index) => (
                   <div key={index} className="exam-card">

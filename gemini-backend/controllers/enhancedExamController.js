@@ -1,9 +1,17 @@
 import EnhancedExam from "../models/EnhancedExam.js";
-import Submission from "../models/Submission.js";
+import EnhancedSubmission from "../models/EnhancedSubmission.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+// Check if GEMINI_API_KEY is available
+let genAI;
+let model;
+
+if (process.env.GEMINI_API_KEY) {
+  genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+} else {
+  console.warn("⚠️  GEMINI_API_KEY is not configured. Enhanced exam generation will be disabled.");
+}
 
 // Available subjects
 const SUBJECTS = {
@@ -23,6 +31,14 @@ export const generateExam = async (req, res) => {
   try {
     const { subject, questionCount, difficulty = "medium" } = req.body;
 
+    // Check if GEMINI_API_KEY is configured
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ 
+        success: false,
+        error: "GEMINI_API_KEY is not configured. Please check your environment variables." 
+      });
+    }
+
     if (!subject || !questionCount) {
       return res.status(400).json({ 
         success: false,
@@ -37,7 +53,15 @@ export const generateExam = async (req, res) => {
       });
     }
 
-    const prompt = `Generate ${questionCount} multiple choice questions for ${SUBJECTS[subject] || subject} at ${difficulty} difficulty level. 
+    // Validate subject
+    if (!SUBJECTS[subject]) {
+      return res.status(400).json({ 
+        success: false,
+        error: `Invalid subject: ${subject}. Valid subjects are: ${Object.keys(SUBJECTS).join(', ')}` 
+      });
+    }
+
+    const prompt = `Generate ${questionCount} multiple choice questions for ${SUBJECTS[subject]} at ${difficulty} difficulty level. 
     Each question should have 4 options (A, B, C, D) with one correct answer.
     Return the response in JSON format with this structure:
     {
@@ -68,17 +92,24 @@ export const generateExam = async (req, res) => {
       if (!examData.questions || !Array.isArray(examData.questions)) {
         throw new Error("Invalid questions format");
       }
+      
+      // Validate each question has required fields
+      examData.questions.forEach((q, index) => {
+        if (!q.question || !q.options || !q.correctAnswer || !q.explanation) {
+          throw new Error(`Question ${index + 1} is missing required fields`);
+        }
+      });
     } catch (parseError) {
       console.error("JSON parsing error:", parseError);
       return res.status(500).json({ 
         success: false,
-        error: "Failed to parse exam data" 
+        error: `Failed to parse exam data: ${parseError.message}` 
       });
     }
     
     // Create enhanced exam in database
     const exam = new EnhancedExam({
-      title: `${SUBJECTS[subject] || subject} Exam - ${questionCount} Questions`,
+      title: `${SUBJECTS[subject]} Exam - ${questionCount} Questions`,
       subject: subject,
       questionCount: questionCount,
       difficulty: difficulty,
@@ -103,7 +134,7 @@ export const generateExam = async (req, res) => {
     console.error("Generate exam error:", err.message);
     res.status(500).json({ 
       success: false,
-      error: "Failed to generate exam" 
+      error: `Failed to generate exam: ${err.message}` 
     });
   }
 };
@@ -130,6 +161,7 @@ export const submitAndScoreExam = async (req, res) => {
 
     let correctAnswers = 0;
     const results = [];
+    const formattedAnswers = [];
 
     exam.questions.forEach((question, index) => {
       const userAnswer = answers[index];
@@ -144,14 +176,20 @@ export const submitAndScoreExam = async (req, res) => {
         isCorrect,
         explanation: question.explanation
       });
+
+      // Format answers to match Submission schema
+      formattedAnswers.push({
+        questionId: question._id || index.toString(),
+        answer: userAnswer
+      });
     });
 
     const score = (correctAnswers / exam.questions.length) * 100;
     
-    const submission = new Submission({
+    const submission = new EnhancedSubmission({
       userId,
       examId,
-      answers,
+      answers: formattedAnswers,
       score,
       results,
       submittedAt: new Date()
@@ -171,7 +209,7 @@ export const submitAndScoreExam = async (req, res) => {
     console.error("Submit and score exam error:", err.message);
     res.status(500).json({ 
       success: false,
-      error: "Failed to submit exam" 
+      error: `Failed to submit exam: ${err.message}` 
     });
   }
 };
@@ -190,7 +228,7 @@ export const getAvailableSubjects = async (req, res) => {
     console.error("Get subjects error:", err.message);
     res.status(500).json({ 
       success: false,
-      error: "Failed to fetch subjects" 
+      error: `Failed to fetch subjects: ${err.message}` 
     });
   }
 };
@@ -200,19 +238,33 @@ export const getUserExamHistory = async (req, res) => {
   try {
     const { userId } = req.params;
     
-    const submissions = await Submission.find({ userId })
+    const submissions = await EnhancedSubmission.find({ userId })
       .populate('examId', 'title subject questionCount')
       .sort({ submittedAt: -1 });
 
+    // Format the submissions to match dashboard expectations
+    const formattedSubmissions = submissions.map(sub => ({
+      examName: sub.examId?.title || 'Enhanced Exam',
+      marks: Math.round(sub.score),
+      totalMarks: 100,
+      percentage: Math.round(sub.score),
+      date: sub.submittedAt,
+      subject: sub.examId?.subject || 'General',
+      type: 'enhanced',
+      score: sub.score,
+      correctAnswers: sub.results?.filter(r => r.isCorrect).length || 0,
+      totalQuestions: sub.results?.length || 0
+    }));
+
     res.status(200).json({
       success: true,
-      submissions
+      submissions: formattedSubmissions
     });
   } catch (err) {
     console.error("Get user exam history error:", err.message);
     res.status(500).json({ 
       success: false,
-      error: "Failed to fetch exam history" 
+      error: `Failed to fetch exam history: ${err.message}` 
     });
   }
 };

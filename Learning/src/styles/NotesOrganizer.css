@@ -1,7 +1,15 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  background-color: #f0f0f0; /* Full page background color */
+}
+
 .notes-organizer-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  min-height: 100vh; /* Ensure container takes full viewport height */
+  box-sizing: border-box;
 }
 
 .header-section {

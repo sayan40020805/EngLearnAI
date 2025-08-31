@@ -1,10 +1,18 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  background-color: #f9fafb; /* Full page background color */
+}
+
 .organizer-container {
   max-width: 600px;
   margin: 40px auto;
   padding: 20px;
   border-radius: 10px;
-  background-color: #f9fafb;
+  background-color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-height: 100vh; /* Ensure container takes full viewport height */
+  box-sizing: border-box;
 }
 
 .organizer-container h2 {

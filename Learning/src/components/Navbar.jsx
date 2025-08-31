@@ -6,7 +6,7 @@ import "../styles/Sidebar.css";
 
 export default function Navbar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout, theme, toggleTheme } = useAuth();
 
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
@@ -21,6 +21,9 @@ export default function Navbar() {
       <nav className={`navbar ${sidebarOpen ? "sidebar-open" : ""}`}>
         <button className="sidebar-toggle-btn" onClick={toggleSidebar}>
           ☰
+        </button>
+        <button className="theme-toggle-btn" onClick={toggleTheme}>
+          {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
         </button>
         <div className="navbar-brand">EngiLearn AI</div>
         <div className="navbar-links">

@@ -1,11 +1,13 @@
-# TODO: Remove Progress Bars and Fix Exam History
+# TODO: Update Notes and Organizer CSS for Full Page Color
 
 ## Tasks
-- [ ] Remove progress bar from Dashboard exam history cards
-- [ ] Remove progress bar from EnhancedExamPage exam interface
-- [ ] Remove text progress from TraditionalExamList
-- [ ] Add event dispatch in TraditionalExamList after exam submission
-- [ ] Remove /progressbar route from AppRoutes.jsx
+- [x] Update Learning/src/styles/Notes.css to apply full page background color
+- [x] Update Learning/src/styles/Organizer.css to apply full page background color
+- [x] Update Learning/src/styles/NotesOrganizer.css to apply full page background color
+- [ ] Test the updated pages to ensure full page color is applied correctly
+- [ ] Adjust any padding/margins if needed for better layout
 
-## Status
-- [ ] All tasks completed
+## Notes
+- Current CSS limits background color to content containers with max-width
+- Plan: Set containers to full viewport width/height and apply background color
+- Ensure layout remains responsive and visually appealing

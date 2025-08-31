@@ -6,11 +6,17 @@
   background-color: #0f0f0f;
   color: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 191, 255, 0.3);
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
+}
+
+.light-mode .navbar {
+  background-color: #ffffff;
+  color: #213547;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand {
@@ -37,6 +43,19 @@
   position: relative;
   padding: 5px;
   transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.light-mode .navbar-links a {
+  color: #213547;
+}
+
+.light-mode .navbar-links a:hover {
+  color: #747bff;
+  transform: translateY(-2px);
+}
+
+.light-mode .navbar-links a:hover::after {
+  width: 100%;
 }
 
 .navbar-links a::after {
@@ -70,7 +89,29 @@
   transition: color 0.3s ease;
 }
 
+.light-mode .sidebar-toggle-btn {
+  color: #213547;
+}
+
 .sidebar-toggle-btn:hover {
+  color: #00bfff;
+}
+
+.theme-toggle-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 5px;
+  transition: color 0.3s ease;
+}
+
+.light-mode .theme-toggle-btn {
+  color: #213547;
+}
+
+.theme-toggle-btn:hover {
   color: #00bfff;
 }
 

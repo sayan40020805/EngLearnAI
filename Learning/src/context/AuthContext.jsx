@@ -5,4 +5,6 @@ export const AuthContext = createContext({
   login: () => {},
   logout: () => {},
   loading: true,
+  theme: 'dark',
+  toggleTheme: () => {},
 });

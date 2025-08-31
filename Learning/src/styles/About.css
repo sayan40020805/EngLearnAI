@@ -12,6 +12,14 @@
   --spacing-unit: 1rem;
 }
 
+.light-mode :root {
+  --bg-dark: #f5f5f5;
+  --bg-container: #ffffff;
+  --text-primary: #213547;
+  --text-secondary: #666666;
+  --accent-color: #1e90ff;
+}
+
 /* ===== Container ===== */
 .about-container {
   max-width: 1680px;
@@ -110,13 +118,15 @@
 @media print {
   .about-container {
     background-color: white;
-    color: black;
+    color: #00bfff;
+    text-shadow: 0 0 5px #00bfff;
   }
 
   .about-container h1,
   .about-container h2,
   .about-container h3 {
-    color: black;
+    color: #00bfff;
+    text-shadow: 0 0 5px #00bfff;
   }
 
   .about-container p,

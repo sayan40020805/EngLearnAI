@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../utils/api";
 import useAuth from "../hooks/useAuth";
 import "../styles/DepartmentCourses.css"; // Optional CSS
 
@@ -18,8 +18,8 @@ const DepartmentCourses = () => {
           return;
         }
 
-        const response = await axios.get(
-          `http://localhost:5000/api/courses/department/${user.department}`
+        const response = await API.get(
+          `/courses/department/${user.department}`
         );
         setCourses(response.data);
         setLoading(false);

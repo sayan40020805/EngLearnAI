@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API from "../utils/api";
 import './TopicQuizGenerator.css';
 
 const TopicQuizGenerator = () => {
@@ -15,19 +16,12 @@ const TopicQuizGenerator = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/topic-quiz/generate-quiz', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ topic, questionCount }),
+      const response = await API.post('/topic-quiz/generate-quiz', {
+        topic,
+        questionCount,
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to generate quiz');
-      }
-
-      const data = await response.json();
+      const data = response.data;
       
       // Navigate to quiz page with the generated quiz data
       navigate('/topic-quiz', { state: { quizData: data } });

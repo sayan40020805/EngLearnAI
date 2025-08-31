@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../utils/api";
 import "../styles/CourseList.css";
 
 const CertificateCourseFinder = () => {
@@ -19,13 +19,13 @@ const CertificateCourseFinder = () => {
   useEffect(() => {
     const fetchCertificateCourses = async () => {
       try {
-        let url = "http://localhost:5000/api/certificate-courses?isFree=true";
-        
-        if (filters.language !== "all") url += `&language=${filters.language}`;
-        if (filters.platform !== "all") url += `&platform=${filters.platform}`;
-        if (filters.level !== "all") url += `&level=${filters.level}`;
-        
-        const res = await axios.get(url);
+        const params = { isFree: true };
+
+        if (filters.language !== "all") params.language = filters.language;
+        if (filters.platform !== "all") params.platform = filters.platform;
+        if (filters.level !== "all") params.level = filters.level;
+
+        const res = await API.get("/certificate-courses", { params });
         setCertificateCourses(res.data);
         setLoading(false);
       } catch (err) {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API from "../utils/api";
 import '../styles/Exam.css';
 
 const TraditionalExamList = () => {
@@ -19,9 +20,8 @@ const TraditionalExamList = () => {
 
   const fetchExams = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/exams`);
-      const data = await response.json();
-      setExams(data);
+      const response = await API.get("/api/exams");
+      setExams(response.data);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching exams:', error);
@@ -45,7 +45,7 @@ const TraditionalExamList = () => {
     }));
   };
 
-  const submitExam = () => {
+  const submitExam = async () => {
     if (!selectedExam) return;
 
     let correctAnswers = 0;
@@ -53,7 +53,7 @@ const TraditionalExamList = () => {
       const userAnswer = answers[index];
       const isCorrect = userAnswer === question.correctAnswer;
       if (isCorrect) correctAnswers++;
-      
+
       return {
         question: question.question,
         userAnswer,
@@ -71,6 +71,20 @@ const TraditionalExamList = () => {
       detailedResults
     });
     setShowResults(true);
+
+    // Submit to backend to save history
+    try {
+      await API.post("/api/exams/submit", {
+        userId: localStorage.getItem('userId') || 'guest',
+        examId: selectedExam._id,
+        answers: Object.values(answers)
+      });
+
+      // Dispatch event to refresh dashboard
+      window.dispatchEvent(new CustomEvent('examSubmitted'));
+    } catch (error) {
+      console.error('Error submitting exam:', error);
+    }
   };
 
   const resetExam = () => {
@@ -105,9 +119,10 @@ const TraditionalExamList = () => {
       <div className="exam-container">
         <div className="exam-header">
           <h2>{selectedExam.title}</h2>
-          <div className="progress">
+          {/* Removed progress text */}
+          {/* <div className="progress">
             Question {currentQuestion + 1} of {selectedExam.questions.length}
-          </div>
+          </div> */}
         </div>
 
         <div className="question-card">
@@ -201,8 +216,6 @@ const TraditionalExamList = () => {
               <h3>{exam.title}</h3>
               <p><strong>Department:</strong> {exam.department}</p>
               <p><strong>Semester:</strong> {exam.semester}</p>
-              <p><strong>Course:</strong> {exam.course}</p>
-              <p><strong>Duration:</strong> {exam.duration} minutes</p>
               <p><strong>Questions:</strong> {exam.questions.length}</p>
               <button onClick={() => startExam(exam)} className="btn-primary">
                 Start Exam

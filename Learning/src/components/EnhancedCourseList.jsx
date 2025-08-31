@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../utils/api";
 import "../styles/CourseList.css";
 
 const EnhancedCourseList = () => {
@@ -13,11 +13,11 @@ const EnhancedCourseList = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const url = selectedLanguage === "all" 
-          ? "http://localhost:5000/api/enhanced-courses"
-          : `http://localhost:5000/api/enhanced-courses/language/${selectedLanguage}`;
-        
-        const res = await axios.get(url);
+        const url = selectedLanguage === "all"
+          ? "/enhanced-courses"
+          : `/enhanced-courses/language/${selectedLanguage}`;
+
+        const res = await API.get(url);
         setCourses(res.data);
         setLoading(false);
       } catch (err) {

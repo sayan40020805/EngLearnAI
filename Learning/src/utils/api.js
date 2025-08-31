@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Base API instance
 const API = axios.create({
-  baseURL: "http://localhost:5000/api", // Change to your backend URL
+  baseURL: "https://gemini-backend-1-gq8i.onrender.com", // Updated backend URL
   headers: {
     "Content-Type": "application/json",
   },

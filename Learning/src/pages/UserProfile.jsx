@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
-import axios from "axios";
+import API from "../utils/api";
 import "../styles/UserProfile.css";
 
 const UserProfile = () => {
@@ -38,16 +38,7 @@ const UserProfile = () => {
     setError("");
 
     try {
-      const token = JSON.parse(localStorage.getItem("user"))?.token;
-      const response = await axios.put(
-        "http://localhost:5000/api/auth/profile",
-        profileData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await API.put("/auth/profile", profileData);
 
       login({ ...user, ...response.data });
       setIsEditing(false);
@@ -64,16 +55,7 @@ const UserProfile = () => {
     setError("");
 
     try {
-      const token = JSON.parse(localStorage.getItem("user"))?.token;
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/marks",
-        marksData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await API.post("/api/auth/marks", marksData);
 
       login({ ...user, ...response.data });
       setMarksData({ examName: "", marks: "", totalMarks: "" });
@@ -89,15 +71,7 @@ const UserProfile = () => {
     setError("");
 
     try {
-      const token = JSON.parse(localStorage.getItem("user"))?.token;
-      const response = await axios.delete(
-        `http://localhost:5000/api/auth/marks/${markId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await API.delete(`/auth/marks/${markId}`);
 
       login({ ...user, ...response.data });
     } catch (err) {

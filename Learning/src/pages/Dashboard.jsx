@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import useAuth from "../hooks/useAuth";
+import API from "../utils/api";
 import "../styles/Dashboard.css";
 
 const Dashboard = () => {
@@ -19,7 +20,7 @@ const Dashboard = () => {
     // Listen for exam submission events
     const handleExamSubmitted = () => {
       console.log('Exam submitted, refreshing dashboard...');
-      fetchUserExamResults(true);
+      fetchUserExamResults();
     };
 
     window.addEventListener('examSubmitted', handleExamSubmitted);
@@ -29,7 +30,7 @@ const Dashboard = () => {
     };
   }, [user]);
 
-  const fetchUserExamResults = async (refresh = false) => {
+  const fetchUserExamResults = async () => {
     try {
       const userId = user._id || user.user?._id || user.id;
       if (!userId) {
@@ -38,12 +39,12 @@ const Dashboard = () => {
       }
 
       const allExams = [];
-      
+
       // Fetch enhanced exam submissions
       try {
-        const enhancedResponse = await fetch(`/api/enhanced-exams/user/${userId}/history`);
-        if (enhancedResponse.ok) {
-          const enhancedData = await enhancedResponse.json();
+        const enhancedResponse = await API.get(`/api/enhanced-exams/user/${userId}/history`);
+        if (enhancedResponse.status === 200) {
+          const enhancedData = enhancedResponse.data;
           if (enhancedData.success && enhancedData.submissions) {
             allExams.push(...enhancedData.submissions.map(sub => ({
               examName: sub.examId?.title || 'Enhanced Exam',
@@ -55,6 +56,8 @@ const Dashboard = () => {
               subject: sub.examId?.subject || 'General'
             })));
           }
+        } else {
+          console.warn(`Enhanced exam history fetch failed: Status ${enhancedResponse.status} - ${enhancedResponse.statusText}`);
         }
       } catch (enhancedError) {
         console.warn("Enhanced exam history fetch failed:", enhancedError);
@@ -62,9 +65,9 @@ const Dashboard = () => {
 
       // Fetch traditional exam results
       try {
-        const traditionalResponse = await fetch(`/api/exams/user/${userId}/history`);
-        if (traditionalResponse.ok) {
-          const traditionalData = await traditionalResponse.json();
+        const traditionalResponse = await API.get(`/api/exams/user/${userId}/history`);
+        if (traditionalResponse.status === 200) {
+          const traditionalData = traditionalResponse.data;
           if (traditionalData.success && traditionalData.submissions) {
             allExams.push(...traditionalData.submissions.map(sub => ({
               examName: sub.examName || 'Traditional Exam',
@@ -76,6 +79,8 @@ const Dashboard = () => {
               subject: sub.subject || 'General'
             })));
           }
+        } else {
+          console.warn(`Traditional exam history fetch failed: Status ${traditionalResponse.status} - ${traditionalResponse.statusText}`);
         }
       } catch (traditionalError) {
         console.warn("Traditional exam history fetch failed:", traditionalError);
@@ -170,12 +175,6 @@ const Dashboard = () => {
                       <p><strong>Marks:</strong> {exam.marks}/{exam.totalMarks}</p>
                       <p><strong>Percentage:</strong> {exam.percentage}%</p>
                       <p><strong>Date:</strong> {new Date(exam.date).toLocaleDateString()}</p>
-                    </div>
-                    <div className="progress-bar">
-                      <div 
-                        className="progress-fill" 
-                        style={{ width: `${exam.percentage}%` }}
-                      ></div>
                     </div>
                   </div>
                 ))}

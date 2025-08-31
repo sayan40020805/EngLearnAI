@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import API from "../utils/api";
 import "../styles/Signup.css";
 
 const Signup = () => {
@@ -24,25 +25,13 @@ const Signup = () => {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Signup failed");
-      }
+      const res = await API.post("/api/auth/signup", formData);
 
       alert("Signup successful! Please log in.");
       navigate("/login");
     } catch (err) {
       console.error("Signup Error:", err);
-      setError(err.message);
+      setError(err.response?.data?.error || "Signup failed");
     }
   };
 

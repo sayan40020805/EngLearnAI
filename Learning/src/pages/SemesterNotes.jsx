@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../utils/api";
 import "../styles/SemesterNotes.css";
 
 const SemesterNotes = () => {
@@ -10,7 +10,7 @@ const SemesterNotes = () => {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/notes"); // Adjust the API path as needed
+        const res = await API.get("/notes"); // Adjust the API path as needed
         setNotes(res.data);
         setLoading(false);
       } catch (err) {

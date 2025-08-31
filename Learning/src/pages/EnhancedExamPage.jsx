@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API from "../utils/api";
 import '../styles/EnhancedExamPage.css';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function EnhancedExamPage() {
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState('');
+  const [customSubject, setCustomSubject] = useState('');
+  const [subjectMode, setSubjectMode] = useState('select'); // 'select' or 'custom'
   const [questionCount, setQuestionCount] = useState(10);
   const [difficulty, setDifficulty] = useState('medium');
   const [exam, setExam] = useState(null);
@@ -24,12 +25,8 @@ export default function EnhancedExamPage() {
 
   const fetchSubjects = async () => {
     try {
-      const response = await fetch(`${API_URL}/enhanced-exams/subjects`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setSubjects(data.subjects || []);
+      const response = await API.get("/api/enhanced-exams/subjects");
+      setSubjects(response.data.subjects || []);
     } catch (error) {
       console.error('Error fetching subjects:', error);
       setSubjects([]);
@@ -37,33 +34,24 @@ export default function EnhancedExamPage() {
   };
 
   const generateExam = async () => {
-    if (!selectedSubject) {
-      setError('Please select a subject');
+    const subjectToUse = subjectMode === 'select' ? selectedSubject : customSubject.trim();
+    if (!subjectToUse) {
+      setError(subjectMode === 'select' ? 'Please select a subject' : 'Please enter a subject');
       return;
     }
 
     setLoading(true);
     setError(null);
-    
+
     try {
-      const response = await fetch(`${API_URL}/enhanced-exams/generate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          subject: selectedSubject,
-          questionCount: parseInt(questionCount),
-          difficulty: difficulty
-        }),
+      const response = await API.post("/api/enhanced-exams/generate", {
+        subject: subjectToUse,
+        questionCount: parseInt(questionCount),
+        difficulty: difficulty
       });
 
-      const data = await response.json();
+      const data = response.data;
       
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate exam');
-      }
-
       if (!data.exam || !data.exam.questions) {
         throw new Error('Invalid exam data received');
       }
@@ -111,24 +99,14 @@ export default function EnhancedExamPage() {
     setError(null);
     
     try {
-      const response = await fetch(`${API_URL}/enhanced-exams/submit-and-score`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: localStorage.getItem('userId') || 'guest',
-          examId: exam.id,
-          answers: Object.values(answers)
-        }),
+      const response = await API.post("/api/enhanced-exams/submit-and-score", {
+        userId: localStorage.getItem('userId') || 'guest',
+        examId: exam.id,
+        answers: exam.questions.map((q, i) => ({ questionId: q._id, answer: answers[i] || null }))
       });
 
-      const data = await response.json();
+      const data = response.data;
       
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to submit exam');
-      }
-
       setResults(data);
       setExamStarted(false);
       
@@ -157,8 +135,8 @@ export default function EnhancedExamPage() {
         <div className="results-card">
           <h2>Exam Results</h2>
           <div className="score-display">
-            <h3>Your Score: {results.score}%</h3>
-            <p>{results.correctAnswers} out of {results.totalQuestions} questions correct</p>
+            <h3>Your Score: {results.percentage}%</h3>
+            <p>{results.score} out of {results.totalQuestions} questions correct</p>
           </div>
           
           <div className="results-details">
@@ -195,23 +173,63 @@ export default function EnhancedExamPage() {
           )}
           
           <div className="form-group">
-            <label>Select Subject:</label>
-            <select 
-              value={selectedSubject} 
-              onChange={(e) => {
-                setSelectedSubject(e.target.value);
-                setError(null);
-              }}
-              className="form-control"
-            >
-              <option value="">Choose a subject</option>
-              {subjects.map(subject => (
-                <option key={subject.key} value={subject.key}>
-                  {subject.name}
-                </option>
-              ))}
-            </select>
+            <label>Subject Selection Mode:</label>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <label>
+                <input
+                  type="radio"
+                  value="select"
+                  checked={subjectMode === 'select'}
+                  onChange={(e) => setSubjectMode(e.target.value)}
+                />
+                Select from list
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="custom"
+                  checked={subjectMode === 'custom'}
+                  onChange={(e) => setSubjectMode(e.target.value)}
+                />
+                Enter custom subject
+              </label>
+            </div>
           </div>
+
+          {subjectMode === 'select' ? (
+            <div className="form-group">
+              <label>Select Subject:</label>
+              <select
+                value={selectedSubject}
+                onChange={(e) => {
+                  setSelectedSubject(e.target.value);
+                  setError(null);
+                }}
+                className="form-control"
+              >
+                <option value="">Choose a subject</option>
+                {subjects.map(subject => (
+                  <option key={subject} value={subject}>
+                    {subject}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <div className="form-group">
+              <label>Enter Subject:</label>
+              <input
+                type="text"
+                value={customSubject}
+                onChange={(e) => {
+                  setCustomSubject(e.target.value);
+                  setError(null);
+                }}
+                className="form-control"
+                placeholder="e.g., Artificial Intelligence"
+              />
+            </div>
+          )}
 
           <div className="form-group">
             <label>Number of Questions:</label>
@@ -240,9 +258,9 @@ export default function EnhancedExamPage() {
             </select>
           </div>
 
-          <button 
-            onClick={generateExam} 
-            disabled={loading || !selectedSubject}
+          <button
+            onClick={generateExam}
+            disabled={loading || !(subjectMode === 'select' ? selectedSubject : customSubject.trim())}
             className="btn-primary"
           >
             {loading ? 'Generating...' : 'Generate Exam'}
@@ -268,7 +286,8 @@ export default function EnhancedExamPage() {
 
   return (
     <div className="exam-container">
-      <div className="exam-progress">
+      {/* Removed exam-progress section with progress bar */}
+      {/* <div className="exam-progress">
         <div className="progress-bar">
           <div 
             className="progress-fill" 
@@ -276,7 +295,7 @@ export default function EnhancedExamPage() {
           ></div>
         </div>
         <p>Question {currentQuestion + 1} of {exam.questions.length}</p>
-      </div>
+      </div> */}
 
       <div className="exam-question">
         <h3>{exam.questions[currentQuestion]?.question}</h3>

@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
+import API from "../utils/api";
 import "../styles/ChatBox.css";
 
 function ChatBox() {
@@ -18,7 +18,7 @@ function ChatBox() {
     setPrompt("");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/gemini/ask", {
+      const res = await API.post("/api/gemini/ask", {
         prompt,
       });
       setMessages((prev) => [

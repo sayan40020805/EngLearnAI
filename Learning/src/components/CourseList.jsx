@@ -1,7 +1,7 @@
 // src/components/CourseList.jsx
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../utils/api";
 import "../styles/CourseList.css"; // Optional: your own CSS file
 
 const CourseList = () => {
@@ -12,7 +12,7 @@ const CourseList = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/courses");
+        const res = await API.get("/courses");
         setCourses(res.data);
       } catch (err) {
         console.error(err);

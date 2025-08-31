@@ -6,8 +6,8 @@
   background-color: #0f0f0f;
   color: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 191, 255, 0.3);
-  position: sticky;
-  top: 0;
+  position: fixed;
+  top: -20;
   left: 0;
   width: 100%;
   z-index: 1000;

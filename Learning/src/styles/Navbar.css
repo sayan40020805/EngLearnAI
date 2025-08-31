@@ -7,7 +7,7 @@
   color: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 191, 255, 0.3);
   position: fixed;
-  top: -20;
+  top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
@@ -128,5 +128,5 @@
 
 /* Add padding to body to prevent content overlap with fixed navbar */
 body {
-  padding-top: 80px;
+  padding-top: 20px;
 }

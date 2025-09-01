@@ -6,6 +6,7 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   min-height: 100vh;
+  padding-top: 90px;
 }
 
 .dashboard h1 {
@@ -200,31 +201,32 @@
   .dashboard {
     padding: 1rem;
   }
-  
+
   .dashboard h1 {
     font-size: 2rem;
   }
-  
+
   .user-info-card {
     grid-template-columns: 1fr;
     text-align: center;
   }
-  
+
   .user-avatar {
     margin: 0 auto;
   }
-  
+
   .exam-cards {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 480px) {
+
   .user-profile-section,
   .exam-history-section {
     padding: 1rem;
   }
-  
+
   .exam-card {
     padding: 1rem;
   }

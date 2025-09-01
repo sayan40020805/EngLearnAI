@@ -12,7 +12,7 @@
 .chat-container {
   position: fixed;
   bottom: 20px;
-  right: 94px;
+  right: 20px;
   z-index: 1000;
 }
 
@@ -25,6 +25,7 @@
   flex-direction: column;
   height: 70vh;
   width: 400px;
+  max-width: calc(100vw - 40px);
   animation: slideIn 0.3s ease-out;
   border: 1px solid var(--border);
 }

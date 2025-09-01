@@ -15,6 +15,7 @@ body, html {
 .notes-container h2 {
   text-align: center;
   margin-bottom: 20px;
+  font-size: 2rem;
 }
 
 .notes-list {
@@ -28,6 +29,12 @@ body, html {
   margin-bottom: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.note-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .download-btn {
@@ -38,8 +45,56 @@ body, html {
   padding: 8px 12px;
   border-radius: 4px;
   text-decoration: none;
+  transition: background-color 0.2s ease;
 }
 
 .download-btn:hover {
   background-color: #2563eb;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .notes-container {
+    padding: 15px;
+    max-width: 100%;
+  }
+
+  .notes-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+
+  .note-item {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .download-btn {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .notes-container {
+    padding: 10px;
+  }
+
+  .notes-container h2 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+
+  .note-item {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .download-btn {
+    padding: 5px 8px;
+    font-size: 0.8rem;
+    display: block;
+    text-align: center;
+    margin-top: 8px;
+  }
 }

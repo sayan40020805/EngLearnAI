@@ -13,26 +13,32 @@
 h2 {
   color: #00bfff;
   /* Sky blue heading */
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
 .search-container {
   display: flex;
-  width: 1680px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
   justify-content: center;
   margin-bottom: 2rem;
   flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .search-container input {
   padding: 0.5rem;
-  width: 600px;
-  max-width: 90%;
+  width: 100%;
+  max-width: 500px;
   border: 1px solid #00bfff;
   /* Sky blue border */
   border-radius: 4px;
   background-color: #1a1a1a;
   /* Darker input background */
   color: #ffffff;
+  box-sizing: border-box;
 }
 
 .light-mode .search-container input {
@@ -43,7 +49,6 @@ h2 {
 
 .search-container button {
   padding: 0.5rem 1rem;
-  margin-left: 0.5rem;
   background-color: #00bfff;
   color: #ffffff;
   text-shadow: 0 0 5px #00bfff;
@@ -52,6 +57,7 @@ h2 {
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 0 10px #00bfff;
+  white-space: nowrap;
 }
 
 .light-mode .search-container button {
@@ -74,6 +80,8 @@ h2 {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .video-card {
@@ -81,6 +89,7 @@ h2 {
   border-radius: 8px;
   box-shadow: 0 0 12px rgba(0, 191, 255, 0.2);
   overflow: hidden;
+  width: 100%;
 }
 
 .light-mode .video-card {
@@ -88,15 +97,109 @@ h2 {
   box-shadow: 0 0 12px rgba(116, 123, 255, 0.2);
 }
 
+.video-card iframe {
+  width: 100%;
+  height: 200px;
+  border: none;
+}
+
 .video-title {
   padding: 0.5rem;
   font-weight: bold;
   text-align: center;
   color: #00bfff;
+  font-size: 0.9rem;
+  line-height: 1.3;
 }
 
 .light-mode .video-title {
   color: #747bff;
+}
+
+.video-description {
+  padding: 0 0.5rem 0.5rem;
+  font-size: 0.8rem;
+  color: #cccccc;
+  line-height: 1.4;
+}
+
+.light-mode .video-description {
+  color: #666666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .youtube-fetcher {
+    padding: 1rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .search-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .search-container input {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .search-container button {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .video-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.8rem;
+  }
+
+  .video-card iframe {
+    height: 180px;
+  }
+
+  .video-title {
+    font-size: 0.8rem;
+    padding: 0.4rem;
+  }
+
+  .video-description {
+    font-size: 0.75rem;
+    padding: 0 0.4rem 0.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .youtube-fetcher {
+    padding: 0.5rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .video-grid {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+
+  .video-card iframe {
+    height: 160px;
+  }
+
+  .video-title {
+    font-size: 0.75rem;
+  }
+
+  .video-description {
+    font-size: 0.7rem;
+  }
 }
 
 

@@ -2,22 +2,108 @@
   padding: 20px;
   max-width: 800px;
   margin: auto;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .exam-container h2 {
   text-align: center;
   margin-bottom: 20px;
+  font-size: 2rem;
+  color: #1976d2;
 }
 
 .exam-list {
   list-style: none;
   padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
 }
 
 .exam-item {
   background-color: #e3f2fd;
-  padding: 15px;
-  margin-bottom: 15px;
+  padding: 20px;
+  margin-bottom: 0;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #bbdefb;
+}
+
+.exam-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.exam-item h3 {
+  color: #0d47a1;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.exam-item p {
+  color: #424242;
+  margin: 0.3rem 0;
+  line-height: 1.4;
+}
+
+.exam-item .exam-date {
+  font-weight: bold;
+  color: #1976d2;
+}
+
+.exam-item .exam-duration {
+  font-style: italic;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .exam-container {
+    padding: 15px;
+    max-width: 100%;
+  }
+
+  .exam-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+
+  .exam-list {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .exam-item {
+    padding: 15px;
+  }
+
+  .exam-item h3 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .exam-container {
+    padding: 10px;
+  }
+
+  .exam-container h2 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+
+  .exam-list {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .exam-item {
+    padding: 12px;
+  }
+
+  .exam-item h3 {
+    font-size: 1rem;
+  }
 }

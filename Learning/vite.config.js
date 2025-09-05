@@ -4,13 +4,14 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: 'localhost', // or '0.0.0.0' if needed
-    port: 5173,
-    hmr: {
-      protocol: 'ws',
-      host: 'localhost',
-      port: 5173,
-      clientPort: 5173,
+    host: true,
+    port: 5176,
+    proxy: {
+      '/api': {
+        target: 'https://gemini-backend-1-gq8i.onrender.com/api',
+        changeOrigin: true,
+        secure: true,
+      },
     },
   },
 });

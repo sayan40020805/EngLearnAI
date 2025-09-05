@@ -1,14 +1,17 @@
-body, html {
+body,
+html {
   height: 100%;
-  margin: 0;
-  background-color: #f0f0f0; /* Full page background color */
+  margin-top: 100px;
+  background-color: #f0f0f0;
+  /* Full page background color */
 }
 
 .notes-organizer-container {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 20px auto;
   padding: 2rem;
-  min-height: 100vh; /* Ensure container takes full viewport height */
+  min-height: calc(100vh - 70px);
+  /* Account for navbar height */
   box-sizing: border-box;
 }
 
@@ -124,7 +127,8 @@ body, html {
   margin-top: 3rem;
 }
 
-.back-button, .home-button {
+.back-button,
+.home-button {
   padding: 0.8rem 2rem;
   background: #667eea;
   color: white;
@@ -135,14 +139,15 @@ body, html {
   transition: background 0.3s ease;
 }
 
-.back-button:hover, .home-button:hover {
+.back-button:hover,
+.home-button:hover {
   background: #5a6fd8;
 }
 
 /* New styles for NotesAndOrganizer component */
 .notes-organizer-container {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 20px auto;
   padding: 2rem;
 }
 
@@ -207,9 +212,10 @@ body, html {
 @media (max-width: 768px) {
   .organizer-options {
     grid-template-columns: 1fr;
+    /* margin-top: 200px; */
   }
-  
+
   .notes-organizer-container {
-    padding: 1rem;
+    padding: 2rem;
   }
 }

@@ -1,10 +1,12 @@
 .semester-selection-container {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 0 110px;
   padding: 2rem;
+  /* margin-top: 200px; */
 }
 
 .semester-selection-container h1 {
+  margin-top: 110px;
   text-align: center;
   color: #333;
   margin-bottom: 1rem;

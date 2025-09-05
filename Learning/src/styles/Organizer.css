@@ -6,7 +6,7 @@ body, html {
 
 .organizer-container {
   max-width: 600px;
-  margin: 40px auto;
+  margin: 60px auto 40px auto;
   padding: 20px;
   border-radius: 10px;
   background-color: white;

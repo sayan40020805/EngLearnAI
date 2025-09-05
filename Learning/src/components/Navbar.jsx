@@ -64,9 +64,9 @@ export default function Navbar() {
           <li>
             <Link to="/exam">Exam</Link>
           </li>
-          <li>
+          {/* <li>
             <Link to="/progressbar">Progress Bar</Link>
-          </li>
+          </li> */}
           {user && (
             <li>
               <Link to="/dashboard">User Dashboard</Link>

@@ -11,18 +11,18 @@ const YouTubeFetcher = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [retryCount, setRetryCount] = useState(0);
   const [isRetrying, setIsRetrying] = useState(false);
+  const [backendAvailable, setBackendAvailable] = useState(null); // null: checking, true: available, false: unavailable
   const containerRef = useRef();
 
   const fetchVideos = useCallback(async (token = "", query = "", retryAttempt = 0) => {
+    if (backendAvailable === false) {
+      setError("Backend server is currently unavailable. Please try again later.");
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       setError("");
-
-      console.log(`Fetching YouTube videos (attempt ${retryAttempt + 1}):`, {
-        token: token || 'none',
-        query: query || 'none',
-        endpoint: '/api/youtube/videos'
-      });
 
       const res = await API.get(`/api/youtube/videos`, {
         params: {
@@ -30,14 +30,6 @@ const YouTubeFetcher = () => {
           query: query,
         },
         timeout: 10000, // 10 second timeout
-      });
-
-      console.log("API Response received:", {
-        status: res.status,
-        statusText: res.statusText,
-        dataType: typeof res.data,
-        hasData: !!res.data,
-        dataKeys: res.data ? Object.keys(res.data) : []
       });
 
       // Check if response is HTML (indicating backend issue)
@@ -58,7 +50,6 @@ const YouTubeFetcher = () => {
       }
 
       if (fetchedVideos.length === 0) {
-        console.warn("No videos found in response");
         if (!token) {
           setError("No videos found. Try a different search term.");
         }
@@ -68,15 +59,12 @@ const YouTubeFetcher = () => {
       // Validate video objects
       const validVideos = fetchedVideos.filter(video => {
         if (!video || typeof video !== 'object') {
-          console.warn("Invalid video object:", video);
           return false;
         }
         if (!video.videoId && !video.id) {
-          console.warn("Video missing ID:", video);
           return false;
         }
         if (!video.title) {
-          console.warn("Video missing title:", video);
           return false;
         }
         return true;
@@ -89,32 +77,30 @@ const YouTubeFetcher = () => {
       setRetryCount(0); // Reset retry count on success
 
     } catch (err) {
-      console.error("Fetch error details:", {
-        message: err.message,
-        code: err.code,
-        response: err.response ? {
-          status: err.response.status,
-          statusText: err.response.statusText,
-          data: err.response.data
-        } : 'No response',
-        isNetworkError: !err.response,
-        isTimeout: err.code === 'ECONNABORTED'
-      });
+      console.error(`YouTube fetch error: ${err.message}`);
 
       let errorMessage = "Failed to load videos. ";
 
       if (err.code === 'ECONNABORTED') {
         errorMessage += "Request timed out. Please check your internet connection.";
       } else if (!err.response) {
-        errorMessage += "Network error. Please check your internet connection.";
+        errorMessage += "Network error. Unable to connect to the server. Please check your internet connection or try again later.";
+      } else if (err.response.status === 400) {
+        errorMessage += "Bad request. Invalid search parameters.";
+      } else if (err.response.status === 401) {
+        errorMessage += "Unauthorized. YouTube API key is invalid or missing.";
+      } else if (err.response.status === 403) {
+        errorMessage += "Access forbidden. YouTube API quota may be exceeded or access denied.";
       } else if (err.response.status === 404) {
         errorMessage += "YouTube API endpoint not found. Please contact support.";
+      } else if (err.response.status === 429) {
+        errorMessage += "Too many requests. YouTube API rate limit exceeded. Please try again later.";
       } else if (err.response.status === 500) {
         errorMessage += "Server error. Please try again later.";
-      } else if (err.response.status === 403) {
-        errorMessage += "Access forbidden. YouTube API quota may be exceeded.";
+      } else if (err.response.status === 502 || err.response.status === 503 || err.response.status === 504) {
+        errorMessage += "Server temporarily unavailable. Please try again later.";
       } else {
-        errorMessage += err.message || "Please try again later.";
+        errorMessage += err.message || "An unexpected error occurred. Please try again later.";
       }
 
       // Retry logic for certain errors
@@ -139,7 +125,18 @@ const YouTubeFetcher = () => {
       setLoading(false);
       setIsRetrying(false);
     }
-  }, []);
+  }, [backendAvailable]);
+
+  // Additional error message improvements for no videos or missing IDs
+  useEffect(() => {
+    if (error) {
+      if (error.includes("No videos found")) {
+        setError("No videos matched your search. Please try different keywords.");
+      } else if (error.includes("Video missing ID")) {
+        setError("Some videos returned by the server are missing IDs and cannot be displayed.");
+      }
+    }
+  }, [error]);
 
   const handleSearch = () => {
     setVideos([]); // Clear previous videos
@@ -154,8 +151,27 @@ const YouTubeFetcher = () => {
   };
 
   useEffect(() => {
-    fetchVideos(); // Initial fetch
-  }, [fetchVideos]);
+    // Check backend availability on mount
+    const checkBackend = async () => {
+      try {
+        const res = await API.get('/api/youtube/videos', { timeout: 5000 });
+        if (res.status === 200) {
+          setBackendAvailable(true);
+        } else {
+          setBackendAvailable(false);
+        }
+    } catch {
+      setBackendAvailable(false);
+    }
+    };
+    checkBackend();
+  }, []);
+
+  useEffect(() => {
+    if (backendAvailable === true) {
+      fetchVideos(); // Initial fetch after backend check
+    }
+  }, [backendAvailable, fetchVideos]);
 
   useEffect(() => {
     const handleScroll = () => {

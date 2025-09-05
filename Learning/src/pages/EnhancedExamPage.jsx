@@ -99,10 +99,23 @@ export default function EnhancedExamPage() {
     setError(null);
     
     try {
+      const storedUser = localStorage.getItem('user');
+      let userId = 'guest';
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          userId = parsedUser._id || parsedUser.id || 'guest';
+        } catch {
+          userId = 'guest';
+        }
+      }
       const response = await API.post("/api/enhanced-exams/submit-and-score", {
-        userId: localStorage.getItem('userId') || 'guest',
-        examId: exam.id,
-        answers: exam.questions.map((q, i) => ({ questionId: q._id, answer: answers[i] || null }))
+        userId: userId,
+        examId: exam.id || exam._id,
+        answers: Object.keys(answers).map(index => ({
+          questionId: exam.questions[parseInt(index)]._id,
+          answer: answers[index]
+        }))
       });
 
       const data = response.data;

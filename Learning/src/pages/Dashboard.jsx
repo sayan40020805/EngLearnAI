@@ -8,28 +8,6 @@ const Dashboard = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    console.log("Dashboard - User object:", user);
-    if (user) {
-      // Fetch both traditional and enhanced exam results
-      fetchUserExamResults();
-    } else {
-      setLoading(false);
-    }
-
-    // Listen for exam submission events
-    const handleExamSubmitted = () => {
-      console.log('Exam submitted, refreshing dashboard...');
-      fetchUserExamResults();
-    };
-
-    window.addEventListener('examSubmitted', handleExamSubmitted);
-    
-    return () => {
-      window.removeEventListener('examSubmitted', handleExamSubmitted);
-    };
-  }, [user]);
-
   const fetchUserExamResults = async () => {
     try {
       const userId = user._id || user.user?._id || user.id;
@@ -47,13 +25,13 @@ const Dashboard = () => {
           const enhancedData = enhancedResponse.data;
           if (enhancedData.success && enhancedData.submissions) {
             allExams.push(...enhancedData.submissions.map(sub => ({
-              examName: sub.examId?.title || 'Enhanced Exam',
-              marks: Math.round(sub.score || 0),
-              totalMarks: 100,
-              percentage: Math.round(sub.score || 0),
-              date: sub.submittedAt || new Date(),
+              examName: sub.examName || 'Enhanced Exam',
+              marks: sub.score || 0,
+              totalMarks: sub.totalQuestions || 100,
+              percentage: Math.round(sub.percentage || 0),
+              date: sub.date || new Date(),
               type: 'enhanced',
-              subject: sub.examId?.subject || 'General'
+              subject: sub.subject || 'General'
             })));
           }
         } else {
@@ -124,6 +102,28 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    console.log("Dashboard - User object:", user);
+    if (user) {
+      // Fetch both traditional and enhanced exam results
+      fetchUserExamResults();
+    } else {
+      setLoading(false);
+    }
+
+    // Listen for exam submission events
+    const handleExamSubmitted = () => {
+      console.log('Exam submitted, refreshing dashboard...');
+      fetchUserExamResults();
+    };
+
+    window.addEventListener('examSubmitted', handleExamSubmitted);
+
+    return () => {
+      window.removeEventListener('examSubmitted', handleExamSubmitted);
+    };
+  }, [user]);
 
   const handleLogout = () => {
     logout();

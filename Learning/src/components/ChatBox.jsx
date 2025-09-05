@@ -26,11 +26,32 @@ function ChatBox() {
         { text: res.data.message, isUser: false },
       ]);
     } catch (error) {
-      console.error("AxiosError", error);
+      console.warn("Gemini API Error:", error.message);
+      let errorMessage = "❌ Error getting response from Gemini API";
+
+      if (error.response) {
+        // Server responded with error status
+        if (error.response.status === 404) {
+          errorMessage += "\n\nThe Gemini backend endpoint is not found. Please check if the backend is deployed and the endpoint is correctly configured.";
+        } else if (error.response.status === 500) {
+          errorMessage += "\n\nThe server encountered an internal error. Please try again later or contact support if the issue persists.";
+        } else if (error.response.status === 429) {
+          errorMessage += "\n\nToo many requests. Please wait a moment before trying again.";
+        } else if (error.response.status === 401) {
+          errorMessage += "\n\nAuthentication failed. Please check your login status.";
+        } else {
+          errorMessage += `\n\nServer error (${error.response.status}). Please try again.`;
+        }
+      } else if (error.code === 'ECONNABORTED') {
+        errorMessage += "\n\nRequest timed out. Please check your internet connection and try again.";
+      } else {
+        errorMessage += "\n\nNetwork error. Please check your connection and try again.";
+      }
+
       setMessages((prev) => [
         ...prev,
         {
-          text: "❌ Error getting response from Gemini API",
+          text: errorMessage,
           isUser: false,
         },
       ]);

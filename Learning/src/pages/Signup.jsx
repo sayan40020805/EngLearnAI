@@ -11,6 +11,7 @@ const Signup = () => {
     college: "",
   });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -23,15 +24,18 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
-      const res = await API.post("/api/auth/signup", formData);
+      await API.post("/api/auth/signup", formData);
 
       alert("Signup successful! Please log in.");
       navigate("/login");
     } catch (err) {
       console.error("Signup Error:", err);
       setError(err.response?.data?.error || "Signup failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,7 +79,9 @@ const Signup = () => {
           required
         />
 
-        <button type="submit">Sign Up</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Signing up..." : "Sign Up"}
+        </button>
 
         {error && <p className="error-message">{error}</p>}
         <p className="login-link">

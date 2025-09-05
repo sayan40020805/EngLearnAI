@@ -74,8 +74,18 @@ const TraditionalExamList = () => {
 
     // Submit to backend to save history
     try {
+      const storedUser = localStorage.getItem('user');
+      let userId = 'guest';
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          userId = parsedUser._id || parsedUser.id || 'guest';
+        } catch {
+          userId = 'guest';
+        }
+      }
       await API.post("/api/exams/submit", {
-        userId: localStorage.getItem('userId') || 'guest',
+        userId: userId,
         examId: selectedExam._id,
         answers: Object.values(answers)
       });

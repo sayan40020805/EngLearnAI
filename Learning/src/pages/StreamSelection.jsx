@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/StreamSelection.css';
 
@@ -13,10 +13,8 @@ const streams = [
 
 const StreamSelection = () => {
   const navigate = useNavigate();
-  const [selectedStream, setSelectedStream] = useState('');
 
   const handleStreamSelect = (streamId) => {
-    setSelectedStream(streamId);
     navigate(`/semester-selection/${streamId}`);
   };
 

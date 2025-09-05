@@ -1,19 +1,12 @@
 body,
 html {
   height: 100%;
-  margin-top: 100px;
+  margin: 0;
   background-color: #f0f0f0;
   /* Full page background color */
 }
 
-.notes-organizer-container {
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 2rem;
-  min-height: calc(100vh - 70px);
-  /* Account for navbar height */
-  box-sizing: border-box;
-}
+
 
 .header-section {
   text-align: center;
@@ -22,6 +15,7 @@ html {
 
 .header-section h1 {
   color: #333;
+  margin-top: 90px;
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
 }

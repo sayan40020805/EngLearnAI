@@ -30,7 +30,7 @@ This system has been enhanced to provide a comprehensive course management platf
 ### 1. Install Dependencies
 ```bash
 # Backend
-cd gemini-backend
+cd deepseek-backend
 npm install
 
 # Frontend
@@ -39,7 +39,7 @@ npm install
 ```
 
 ### 2. Environment Setup
-Create a `.env` file in the `gemini-backend` directory:
+Create a `.env` file in the `deepseek-backend` directory:
 ```
 MONGO_URI=your_mongodb_connection_string
 PORT=5000
@@ -48,14 +48,14 @@ YOUTUBE_API_KEY=your_youtube_api_key
 
 ### 3. Seed Sample Data
 ```bash
-cd gemini-backend
+cd deepseek-backend
 node seeds/seedData.js
 ```
 
 ### 4. Start the Application
 ```bash
 # Terminal 1 - Backend
-cd gemini-backend
+cd deepseek-backend
 npm start
 
 # Terminal 2 - Frontend

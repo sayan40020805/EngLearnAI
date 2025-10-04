@@ -1,17 +1,13 @@
-# TODO: Fix Submit Exam Functionality
+# TODO: Replace Gemini with Deepseek in Chat and Exam
 
 ## Completed Tasks
-- [x] Identified issue: localStorage.getItem('userId') was undefined, causing backend 500 error
-- [x] Fixed EnhancedExamPage.jsx: Updated submitExam to extract userId from stored user object
-- [x] Fixed TraditionalExamList.jsx: Updated submitExam to extract userId from stored user object
-- [x] Verified API setup and authentication flow
+- [x] Update ChatBox.jsx endpoint from /api/gemini/ask to /api/deepseek/ask
+- [x] Change ChatBox.jsx title from "Gemini Chat" to "Deepseek Chat"
+- [x] Update ChatBox.jsx error messages to reference Deepseek instead of Gemini
+- [x] Update vite.config.js proxy target to https://deepseek-backend-1-gq8i.onrender.com/api
+- [x] Update README.md references from gemini-backend to deepseek-backend
 
-## Summary of Changes
-- Modified submitExam functions in both EnhancedExamPage.jsx and TraditionalExamList.jsx
-- Now properly extracts userId from localStorage 'user' object (parsedUser._id || parsedUser.id)
-- Falls back to 'guest' if no user is logged in or parsing fails
-- This should resolve the 500 server error by sending correct userId to backend
-
-## Next Steps
-- Test the submit functionality after these changes
-- If issues persist, may need to investigate backend payload expectations or authentication
+## Notes
+- Exam functionality uses /api/enhanced-exams/generate which internally uses Deepseek API, no frontend changes needed
+- Backend is already configured to use Deepseek API with DEEPSEEK_API_KEY
+- Proxy configuration updated to point to new backend URL

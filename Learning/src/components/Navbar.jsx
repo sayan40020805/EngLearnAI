@@ -64,6 +64,9 @@ export default function Navbar() {
           <li>
             <Link to="/exam">Exam</Link>
           </li>
+          <li>
+            <Link to="/enhanced-exam">AI Exam</Link>
+          </li>
           {/* <li>
             <Link to="/progressbar">Progress Bar</Link>
           </li> */}

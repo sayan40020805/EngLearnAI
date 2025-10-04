@@ -43,70 +43,42 @@ export default function EnhancedExamPage() {
     setLoading(true);
     setError(null);
 
-    const maxRetries = 3;
-    let attempt = 0;
-    let lastError = null;
+    try {
+      const response = await API.post("/api/enhanced-exams/generate", {
+        subject: subjectToUse,
+        questionCount: parseInt(questionCount),
+        difficulty: difficulty
+      });
 
-    while (attempt < maxRetries) {
-      try {
-        const response = await API.post("/api/enhanced-exams/generate", {
-          subject: subjectToUse,
-          questionCount: parseInt(questionCount),
-          difficulty: difficulty
-        });
+      const data = response.data;
 
-        const data = response.data;
-
-        if (!data.exam || !data.exam.questions) {
-          throw new Error('Invalid exam data received');
-        }
-
-        // Map questions to include _id for frontend usage if missing
-        const questionsWithId = data.exam.questions.map((q, index) => ({
-          _id: q._id || `q${index + 1}`,
-          question: q.question,
-          options: q.options,
-          correctAnswer: q.correctAnswer,
-          explanation: q.explanation
-        }));
-
-        setExam({
-          ...data.exam,
-          questions: questionsWithId
-        });
-        setExamStarted(true);
-        setCurrentQuestion(0);
-        setAnswers({});
-        return; // Success, exit
-      } catch (error) {
-        console.error(`Error generating exam (attempt ${attempt + 1}):`, error);
-        lastError = error;
-
-        // Check if it's a server error (5xx) or network error, retry
-        if (error.response && error.response.status >= 500) {
-          attempt++;
-          if (attempt < maxRetries) {
-            const delay = Math.pow(2, attempt) * 1000; // Exponential backoff: 1s, 2s, 4s
-            setError(`Server error. Retrying in ${delay / 1000} seconds... (Attempt ${attempt + 1}/${maxRetries})`);
-            await new Promise(resolve => setTimeout(resolve, delay));
-            continue;
-          }
-        } else {
-          // Client error or other, don't retry
-          break;
-        }
+      if (!data.exam || !data.exam.questions) {
+        throw new Error('Invalid exam data received');
       }
-    }
 
-    // If we reach here, all retries failed or non-retryable error
-    let errorMessage = 'Failed to generate exam. Please try again.';
-    if (lastError.response) {
-      errorMessage = `Server Error: ${lastError.response.data.message || 'Please try again later.'}`;
-    } else if (lastError.code === 'NETWORK_ERROR') {
-      errorMessage = 'Network error. Please check your connection and try again.';
+      // Map questions to include _id for frontend usage if missing
+      const questionsWithId = data.exam.questions.map((q, index) => ({
+        _id: q._id || `q${index + 1}`,
+        question: q.question,
+        options: q.options,
+        correctAnswer: q.correctAnswer,
+        explanation: q.explanation
+      }));
+
+      setExam({
+        ...data.exam,
+        questions: questionsWithId
+      });
+      setExamStarted(true);
+      setCurrentQuestion(0);
+      setAnswers({});
+      setLoading(false);
+      return;
+    } catch (error) {
+      console.error("Error generating exam:", error);
+      setError(error.message || "Failed to generate exam. Please try again.");
+      setLoading(false);
     }
-    setError(errorMessage);
-    setLoading(false);
   };
 
   const handleAnswerSelect = (questionIndex, answer) => {

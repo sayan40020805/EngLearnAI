@@ -1,0 +1,52 @@
+[
+  {
+    "id": "r_1759686836677",
+    "timestamp": "2025-10-05T17:53:56.677Z",
+    "userId": "68e22a05c98747fd7a99ef58",
+    "examId": "exam_1759686836478",
+    "score": 1,
+    "totalQuestions": 2,
+    "percentage": 50,
+    "results": [
+      {
+        "question": "What is 2 + 2?",
+        "userAnswer": "B",
+        "correctAnswer": "B",
+        "explanation": "2 + 2 equals 4.",
+        "isCorrect": true
+      },
+      {
+        "question": "What is the square root of 16?",
+        "userAnswer": "D",
+        "correctAnswer": "B",
+        "explanation": "The square root of 16 is 4.",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "id": "r_1759686874938",
+    "timestamp": "2025-10-05T17:54:34.938Z",
+    "userId": "68e22a05c98747fd7a99ef58",
+    "examId": "exam_1759686874595",
+    "score": 0,
+    "totalQuestions": 2,
+    "percentage": 0,
+    "results": [
+      {
+        "question": "What is 2 + 2?",
+        "userAnswer": "C",
+        "correctAnswer": "B",
+        "explanation": "2 + 2 equals 4.",
+        "isCorrect": false
+      },
+      {
+        "question": "What is the square root of 16?",
+        "userAnswer": "C",
+        "correctAnswer": "B",
+        "explanation": "The square root of 16 is 4.",
+        "isCorrect": false
+      }
+    ]
+  }
+]

@@ -1,13 +1,18 @@
-# TODO: Replace Gemini with Deepseek in Chat and Exam
+# TODO: Update Enhanced Exam to Use Gemini API
 
-## Completed Tasks
-- [x] Update ChatBox.jsx endpoint from /api/gemini/ask to /api/deepseek/ask
-- [x] Change ChatBox.jsx title from "Gemini Chat" to "Deepseek Chat"
-- [x] Update ChatBox.jsx error messages to reference Deepseek instead of Gemini
-- [x] Update vite.config.js proxy target to https://deepseek-backend-1-gq8i.onrender.com/api
-- [x] Update README.md references from gemini-backend to deepseek-backend
+## Current Status
+- EnhancedExamPage.jsx uses pollinations.ai for question generation
+- Backend is configured for Gemini API at gemini-backend-1-gq8i.onrender.com
+- Need to update frontend to call /api/enhanced-exams/generate endpoint
+
+## Tasks
+- [x] Update generateExam function in EnhancedExamPage.jsx to use API.post instead of fetch to pollinations.ai
+- [ ] Change payload to { subject, questionCount, difficulty }
+- [ ] Update response handling to expect questions array directly
+- [ ] Test the integration by generating an exam
+- [ ] Verify questions are generated correctly
+- [ ] Check for any errors and fix if needed
 
 ## Notes
-- Exam functionality uses /api/enhanced-exams/generate which internally uses Deepseek API, no frontend changes needed
-- Backend is already configured to use Deepseek API with DEEPSEEK_API_KEY
-- Proxy configuration updated to point to new backend URL
+- Backend handles prompt generation and JSON formatting
+- Fallback to mock responses if API fails (as per summary)

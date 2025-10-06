@@ -1,10 +1,12 @@
 import axios from "axios";
 
-// Base API instance
+// Base API instance (use gemini backend directly)
+const defaultBase = 'https://gemini-backend-1-gq8i.onrender.com';
+
 const API = axios.create({
-  baseURL: "https://gemini-backend-1-gq8i.onrender.com", // Gemini backend URL
+  baseURL: defaultBase,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 

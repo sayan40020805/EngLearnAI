@@ -29,6 +29,29 @@ const Dashboard = () => {
         return [];
       };
 
+      const fetchLocalExamResults = async (userId) => {
+        try {
+          // Use local server for exam results
+          const response = await fetch(`http://localhost:5000/api/dashboard?userId=${userId}`);
+          if (response.ok) {
+            const data = await response.json();
+            return data.results.map(result => ({
+              examName: result.examName || 'Enhanced Exam',
+              marks: result.score,
+              totalMarks: result.totalQuestions,
+              percentage: result.percentage,
+              date: result.timestamp,
+              type: 'enhanced',
+              subject: result.subject || 'General'
+            }));
+          }
+          console.warn(`Local exam results fetch failed: Status ${response.status}`);
+        } catch (error) {
+          console.warn("Local exam results fetch failed:", error);
+        }
+        return [];
+      };
+
       const fetchTraditionalHistory = async (userId) => {
         try {
           const response = await API.get(`/api/exams/user/${userId}/history`);
@@ -42,9 +65,32 @@ const Dashboard = () => {
         return [];
       };
 
-      const [enhancedResults, traditionalResults] = await Promise.all([
+      const fetchTopicQuizHistory = async (userId) => {
+        try {
+          const response = await API.get(`/api/topic-quiz/user/${userId}/history`);
+          if (response.status === 200 && response.data.success && response.data.results) {
+            return response.data.results.map(result => ({
+              examName: `${result.topic} Quiz (${result.difficulty})`,
+              marks: result.correctAnswers,
+              totalMarks: result.totalQuestions,
+              percentage: result.percentage,
+              date: result.date || new Date(),
+              type: 'topic-quiz',
+              subject: result.topic
+            }));
+          }
+          console.warn(`Topic quiz history fetch failed: Status ${response.status} - ${response.statusText}`);
+        } catch (error) {
+          console.warn("Topic quiz history fetch failed:", error);
+        }
+        return [];
+      };
+
+      const [enhancedResults, traditionalResults, topicQuizResults, localResults] = await Promise.all([
         fetchEnhancedHistory(userId),
-        fetchTraditionalHistory(userId)
+        fetchTraditionalHistory(userId),
+        fetchTopicQuizHistory(userId),
+        fetchLocalExamResults(userId)
       ]);
 
       const allExams = [
@@ -66,6 +112,16 @@ const Dashboard = () => {
           type: 'traditional',
           subject: sub.subject || 'General'
         })),
+        ...topicQuizResults.map(sub => ({
+          examName: sub.examName || 'Topic Quiz',
+          marks: sub.marks || 0,
+          totalMarks: sub.totalMarks || 100,
+          percentage: Math.round(((sub.marks || 0) / (sub.totalMarks || 100)) * 100),
+          date: sub.date || new Date(),
+          type: 'topic-quiz',
+          subject: sub.subject || 'General'
+        })),
+        ...localResults,
       ];
 
       // Also include any marks from user profile

@@ -121,11 +121,13 @@ export default function EnhancedExamPage() {
       const response = await API.post('/api/enhanced-exams/submit-and-score', resultPayload);
       const { score, totalQuestions, percentage, results: detailedResults } = response.data;
 
+      const safeDetailedResults = Array.isArray(detailedResults) ? detailedResults : [];
+
       setResults({
         score,
         totalQuestions,
         percentage,
-        results: detailedResults
+        results: safeDetailedResults
       });
 
       // Dispatch event to refresh dashboard
@@ -159,7 +161,7 @@ export default function EnhancedExamPage() {
           </div>
 
           <div className="results-details">
-            {results.results.map((r, i) => (
+            {Array.isArray(results.results) && results.results.map((r, i) => (
               <div key={i} className={`result-item ${r.isCorrect ? 'correct' : 'incorrect'}`}>
                 <h4>Q{i + 1}. {r.question}</h4>
                 <p><strong>Your Answer:</strong> {r.userAnswer || 'Not Answered'}</p>

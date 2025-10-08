@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API from '../utils/api';
 import './TopicQuizGenerator.css';
 
 const TopicQuizGenerator = () => {
@@ -71,32 +72,18 @@ REQUIRED FORMAT - STRICT JSON ONLY:
 
 VALIDATION: Ensure each question is completely unique and tests different knowledge areas.`;
 
-      // Use Hugging Face free inference API (CORS-friendly)
-      const response = await fetch('https://api-inference.huggingface.co/models/microsoft/Phi-3-mini-4k-instruct', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          inputs: message,
-          parameters: {
-            max_new_tokens: 2000,
-            temperature: 0.7,
-            do_sample: true,
-            top_p: 0.9,
-            return_full_text: false
-          }
-        }),
-      });
+      // Use the backend proxy for deepseek
+      const response = await API.post('/api/deepseek/ask', { message });
 
-      const data = await response.json();
+      // The proxy returns text, so we use response.data directly
+      const generatedText = response.data;
 
-      if (data && data[0] && data[0].generated_text) {
+      if (generatedText) {
         // Parse the AI response JSON string to an object
         let quizData;
         try {
           // Try to extract JSON from the response
-          const jsonMatch = data[0].generated_text.match(/\{[\s\S]*\}/);
+          const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
             quizData = JSON.parse(jsonMatch[0]);
           } else {

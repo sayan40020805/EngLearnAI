@@ -6,7 +6,7 @@ import '../styles/EnhancedExamPage.css';
 
 export default function EnhancedExamPage() {
   const { user } = useAuth();
-  const [subjects, setSubjects] = useState(['Math', 'Science', 'AI', 'JavaScript', 'Python']);
+  const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState('');
   const [customSubject, setCustomSubject] = useState('');
   const [subjectMode, setSubjectMode] = useState('select');
@@ -20,6 +20,18 @@ export default function EnhancedExamPage() {
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const response = await API.get('/api/enhanced-exams/subjects');
+        setSubjects(response.data.subjects || []);
+      } catch (err) {
+        console.error('Failed to fetch subjects', err);
+      }
+    };
+    fetchSubjects();
+  }, []);
 
   const generateExam = async () => {
     const subjectToUse = subjectMode === 'select' ? selectedSubject : customSubject.trim();
@@ -40,25 +52,31 @@ export default function EnhancedExamPage() {
 
       const response = await API.post('/api/enhanced-exams/generate', payload);
 
-      const questions = response.data.questions;
+      const examData = response.data?.exam;
+      const questions = examData?.questions;
+
+      if (!Array.isArray(questions)) {
+        throw new Error("Invalid response format from the server. Expected an array of questions.");
+      }
 
       // Assign IDs
       const questionsWithId = questions.map((q, i) => ({
-        _id: `q${i + 1}`,
+        ...q,
+        _id: q._id || `q${i + 1}`,
         question: q.question,
         options: q.options,
-        correctAnswer: q.correctAnswer,
-        explanation: q.explanation,
+        correctAnswer: q.correctAnswer, // Ensure these fields exist in the API response
+        explanation: q.explanation,     // Ensure these fields exist in the API response
       }));
 
-      setExam({ questions: questionsWithId });
+      setExam({ ...examData, questions: questionsWithId });
       setExamStarted(true);
       setCurrentQuestion(0);
       setAnswers({});
       setLoading(false);
     } catch (err) {
       console.error('Error generating exam:', err);
-      setError('Failed to generate quiz. Please try again or change topic.');
+      setError(err.message || 'Failed to generate quiz. Please try again or change topic.');
       setLoading(false);
     }
   };
@@ -85,28 +103,25 @@ export default function EnhancedExamPage() {
   };
 
   const submitExam = async () => {
-    let correct = 0;
-    exam.questions.forEach((q, i) => {
-      if (answers[i] === q.correctAnswer) correct++;
-    });
-    const percentage = Math.round((correct / exam.questions.length) * 100);
-
-    const detailedResults = exam.questions.map((q, i) => ({
-      question: q.question,
-      userAnswer: answers[i],
-      correctAnswer: q.correctAnswer,
-      explanation: q.explanation,
-      isCorrect: answers[i] === q.correctAnswer
-    }));
-
-    const subjectToUse = subjectMode === 'select' ? selectedSubject : customSubject.trim();
     const userId = user?._id || user?.user?._id || user?.id;
+
+    const answersPayload = Object.keys(answers).map(questionIndex => ({
+      questionId: exam.questions[questionIndex]._id,
+      answer: answers[questionIndex]
+    }));
 
     const resultPayload = {
       userId,
-      examId: `exam_${Date.now()}`,
-      examName: `${subjectToUse} Exam (${difficulty})`,
-      subject: subjectToUse,
+      examId: exam.id || exam._id,
+      answers: answersPayload
+    };
+
+    setLoading(true);
+    try {
+      const response = await API.post('/api/enhanced-exams/submit-and-score', resultPayload);
+      const { score, totalQuestions, percentage, results: detailedResults } = response.data;
+
+      setResults({
       score: correct,
       totalQuestions: exam.questions.length,
       percentage,
@@ -114,23 +129,21 @@ export default function EnhancedExamPage() {
     };
 
     setResults({
-      score: correct,
-      totalQuestions: exam.questions.length,
+        score,
+        totalQuestions,
       percentage,
       results: detailedResults
     });
 
-    // Persist results to backend
-    try {
-      await API.post('/api/exam-results', resultPayload);
       // Dispatch event to refresh dashboard
       window.dispatchEvent(new Event('examSubmitted'));
+      setExamStarted(false);
     } catch (err) {
-      console.error('Failed to save results to backend', err);
-      // Still show results even if saving fails
+      console.error('Failed to submit exam', err);
+      setError(err.response?.data?.error || 'Failed to submit exam.');
+    } finally {
+      setLoading(false);
     }
-
-    setExamStarted(false);
   };
 
   const restartExam = () => {
@@ -156,7 +169,7 @@ export default function EnhancedExamPage() {
             {results.results.map((r, i) => (
               <div key={i} className={`result-item ${r.isCorrect ? 'correct' : 'incorrect'}`}>
                 <h4>Q{i + 1}. {r.question}</h4>
-                <p><strong>Your Answer:</strong> {r.userAnswer}</p>
+                <p><strong>Your Answer:</strong> {r.userAnswer || 'Not Answered'}</p>
                 <p><strong>Correct:</strong> {r.correctAnswer}</p>
                 {!r.isCorrect && <p><strong>Explanation:</strong> {r.explanation}</p>}
               </div>
@@ -305,7 +318,7 @@ export default function EnhancedExamPage() {
         <div className="navigation-buttons">
           <button onClick={handlePreviousQuestion} disabled={currentQuestion === 0} className="btn-secondary">Previous</button>
           {currentQuestion === exam.questions.length - 1 ? (
-            <button onClick={submitExam} className="btn-primary">Submit</button>
+            <button onClick={submitExam} disabled={loading} className="btn-primary">{loading ? 'Submitting...' : 'Submit'}</button>
           ) : (
             <button onClick={handleNextQuestion} className="btn-primary">Next</button>
           )}

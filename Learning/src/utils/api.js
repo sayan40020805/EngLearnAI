@@ -1,7 +1,10 @@
 import axios from "axios";
 
-// Base API instance (use gemini backend directly)
-const defaultBase = 'https://gemini-backend-1-gq8i.onrender.com';
+// Use local proxy in development, and production URL in production
+const isDevelopment = import.meta.env.DEV;
+const defaultBase = isDevelopment
+  ? 'http://localhost:5000' // Your local proxy server
+  : 'https://gemini-backend-1-gq8i.onrender.com'; // Your production backend
 
 const API = axios.create({
   baseURL: defaultBase,

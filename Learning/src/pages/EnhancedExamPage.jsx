@@ -123,13 +123,6 @@ export default function EnhancedExamPage() {
 
       const safeDetailedResults = Array.isArray(detailedResults) ? detailedResults : [];
 
-      setResults({
-        score,
-        totalQuestions,
-        percentage,
-        results: safeDetailedResults
-      });
-
       // Dispatch event to refresh dashboard
       window.dispatchEvent(new Event('examSubmitted'));
       setExamStarted(false);

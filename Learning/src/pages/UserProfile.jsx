@@ -32,53 +32,36 @@ const UserProfile = () => {
     }
   }, [user]);
 
-  const handleProfileUpdate = async (e) => {
+  const handleApiCall = async (e, apiCall, successCallback) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     try {
-      const response = await API.put("/auth/profile", profileData);
-
-      login({ ...user, ...response.data });
-      setIsEditing(false);
+      const response = await apiCall();
+      login({ ...user, ...response.data }); // Update user context
+      if (successCallback) successCallback();
     } catch (err) {
-      setError(err.response?.data?.error || "Failed to update profile");
+      setError(err.response?.data?.error || "An error occurred.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleProfileUpdate = (e) => {
+    handleApiCall(e, () => API.put("/auth/profile", profileData), () => setIsEditing(false));
   };
 
   const handleAddMarks = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const response = await API.post("/api/auth/marks", marksData);
-
-      login({ ...user, ...response.data });
+    handleApiCall(e, () => API.post("/api/auth/marks", marksData), () => {
       setMarksData({ examName: "", marks: "", totalMarks: "" });
-    } catch (err) {
-      setError(err.response?.data?.error || "Failed to add marks");
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   const handleDeleteMarks = async (markId) => {
+    // This one doesn't have a form event, so we call it slightly differently
     setLoading(true);
     setError("");
-
-    try {
-      const response = await API.delete(`/auth/marks/${markId}`);
-
-      login({ ...user, ...response.data });
-    } catch (err) {
-      setError(err.response?.data?.error || "Failed to delete marks");
-    } finally {
-      setLoading(false);
-    }
+    handleApiCall({ preventDefault: () => {} }, () => API.delete(`/auth/marks/${markId}`));
   };
 
   if (!user) {

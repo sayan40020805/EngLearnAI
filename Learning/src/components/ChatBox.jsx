@@ -1,62 +1,60 @@
-import { useState } from "react";
-import ReactMarkdown from "react-markdown";
-import API from "../utils/api";
-import "../styles/ChatBox.css";
+import React, { useState, useRef, useEffect } from 'react';
+import './ChatBox.css';
 
-function ChatBox() {
-  const [prompt, setPrompt] = useState("");
-  const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(false);
+const ChatBox = () => {
+  const [messages, setMessages] = useState([
+    { text: "Hello! I'm your AI assistant. How can I help you today?", sender: 'bot' }
+  ]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const messagesEndRef = useRef(null);
 
-  const handleSubmit = async (e) => {
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      scrollToBottom();
+    }
+  }, [messages, isOpen]);
+
+  const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!prompt.trim()) return;
+    if (!inputMessage.trim() || isLoading) return;
 
-    setLoading(true);
-    setMessages((prev) => [...prev, { text: prompt, isUser: true }]);
-    setPrompt("");
+    const userMessage = { text: inputMessage, sender: 'user' };
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+    setIsLoading(true);
 
     try {
-      const res = await API.post("/api/gemini/ask", {
-        prompt,
-      });
-      setMessages((prev) => [
-        ...prev,
-        { text: res.data.message, isUser: false },
-      ]);
-    } catch (error) {
-      console.warn("Gemini API Error:", error.message);
-      let errorMessage = "❌ Error getting response from Gemini API";
-
-      if (error.response) {
-        // Server responded with error status
-        if (error.response.status === 404) {
-          errorMessage += "\n\nThe Gemini backend endpoint is not found. Please check if the backend is deployed and the endpoint is correctly configured.";
-        } else if (error.response.status === 500) {
-          errorMessage += "\n\nThe server encountered an internal error. Please try again later or contact support if the issue persists.";
-        } else if (error.response.status === 429) {
-          errorMessage += "\n\nToo many requests. Please wait a moment before trying again.";
-        } else if (error.response.status === 401) {
-          errorMessage += "\n\nAuthentication failed. Please check your login status.";
-        } else {
-          errorMessage += `\n\nServer error (${error.response.status}). Please try again.`;
-        }
-      } else if (error.code === 'ECONNABORTED') {
-        errorMessage += "\n\nRequest timed out. Please check your internet connection and try again.";
-      } else {
-        errorMessage += "\n\nNetwork error. Please check your connection and try again.";
-      }
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          text: errorMessage,
-          isUser: false,
+      const response = await fetch('https://apifreellm.com/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      ]);
+        body: JSON.stringify({
+          message: inputMessage
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        const botMessage = { text: data.response, sender: 'bot' };
+        setMessages(prev => [...prev, botMessage]);
+      } else {
+        const errorMessage = { text: 'Sorry, I encountered an error. Please try again.', sender: 'bot' };
+        setMessages(prev => [...prev, errorMessage]);
+      }
+    } catch (error) {
+      console.error('Chat error:', error);
+      const errorMessage = { text: 'Sorry, I encountered an error. Please try again.', sender: 'bot' };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -64,96 +62,77 @@ function ChatBox() {
     setIsOpen(!isOpen);
   };
 
+  const closeChat = () => {
+    setIsOpen(false);
+  };
+
   return (
-    <div className={`chat-container ${isOpen ? "open" : ""}`}>
+    <>
+      {/* Floating Chat Button */}
+      {!isOpen && (
+        <button className="floating-chat-btn" onClick={toggleChat}>
+          💬
+        </button>
+      )}
+
+      {/* Chat Modal */}
       {isOpen && (
-        <div className="chatbox">
+        <div className="chat-modal">
           <div className="chat-header">
-            <h2>Gemini Chat</h2>
-            <div className="status">
-              <div className="status-indicator"></div>
-              <span>Online</span>
-            </div>
-            <button className="close-button" onClick={toggleChat}>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
+            <h3>AI Chat Assistant</h3>
+            <button className="close-btn" onClick={closeChat}>
+              ×
             </button>
           </div>
 
-          <div className="chat-history">
-            {messages.map((msg, index) => (
+          <div className="chat-messages">
+            {messages.map((message, index) => (
               <div
                 key={index}
-                className={`message ${
-                  msg.isUser ? "user-message" : "bot-message"
-                }`}
+                className={`message ${message.sender === 'user' ? 'user-message' : 'bot-message'}`}
               >
                 <div className="message-content">
-                  <ReactMarkdown>{msg.text}</ReactMarkdown>
-                </div>
-                <div className="message-time">
-                  {new Date().toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  {message.text}
                 </div>
               </div>
             ))}
-            {loading && (
-              <div className="typing-indicator">
-                <div className="typing-dot"></div>
-                <div className="typing-dot"></div>
-                <div className="typing-dot"></div>
+
+            {isLoading && (
+              <div className="message bot-message">
+                <div className="message-content typing">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
               </div>
             )}
+
+            <div ref={messagesEndRef} />
           </div>
 
-          <form onSubmit={handleSubmit} className="chat-form">
-            <input
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Type your message..."
-              className="chat-input"
-              disabled={loading}
-            />
-            <button type="submit" className="chat-button" disabled={loading}>
-              {loading ? "Sending..." : "Send"}
-            </button>
+          <form onSubmit={handleSendMessage} className="chat-input-form">
+            <div className="input-container">
+              <input
+                type="text"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                placeholder="Type your message..."
+                disabled={isLoading}
+                className="chat-input"
+              />
+              <button
+                type="submit"
+                disabled={!inputMessage.trim() || isLoading}
+                className="send-button"
+              >
+                {isLoading ? '...' : 'Send'}
+              </button>
+            </div>
           </form>
         </div>
       )}
-
-      <button className="chat-toggle-button" onClick={toggleChat}>
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          {isOpen ? (
-            <path d="M18 6L6 18M6 6l12 12" />
-          ) : (
-            <>
-              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-              <path d="M17 8h.01" />
-              <path d="M13 8h.01" />
-              <path d="M9 8h.01" />
-            </>
-          )}
-        </svg>
-      </button>
-    </div>
+    </>
   );
-}
+};
 
 export default ChatBox;

@@ -21,6 +21,7 @@ import SemesterSelection from "../pages/SemesterSelection";
 import SubjectSelection from "../pages/SubjectSelection";
 import NotesOrganizer from "../pages/NotesOrganizer";
 import NotesAndOrganizer from "../pages/NotesAndOrganizer";
+import EnhancedExamPage from "../pages/EnhancedExamPage";
 import "../index.css"; // Global styles
 import "../App.css";   // Optional App wrapper styling
 
@@ -51,6 +52,7 @@ export default function AppRoutes() {
           <Route path="/subject-selection/:streamId/:semester" element={<SubjectSelection />} />
           <Route path="/notes-organizer/:streamId/:semester/:subject" element={<NotesOrganizer />} />
           <Route path="/notes" element={<NotesAndOrganizer />} />
+          <Route path="/enhanced-exam" element={<EnhancedExamPage />} />
           <Route path="*" element={<NotFound />} />
           </Routes>
         </div>

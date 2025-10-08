@@ -16,53 +16,113 @@ const Dashboard = () => {
         return;
       }
 
-      const allExams = [];
+      const fetchEnhancedHistory = async (userId) => {
+        try {
+          const response = await API.get(`/api/enhanced-exams/user/${userId}/history`);
+          if (response.status === 200 && response.data.success && response.data.submissions) {
+            return response.data.submissions.map(sub => ({ ...sub, type: 'enhanced' }));
+          }
+          console.warn(`Enhanced exam history fetch failed: Status ${response.status} - ${response.statusText}`);
+        } catch (error) {
+          console.warn("Enhanced exam history fetch failed:", error);
+        }
+        return [];
+      };
 
-      // Fetch enhanced exam submissions
-      try {
-        const enhancedResponse = await API.get(`/api/enhanced-exams/user/${userId}/history`);
-        if (enhancedResponse.status === 200) {
-          const enhancedData = enhancedResponse.data;
-          if (enhancedData.success && enhancedData.submissions) {
-            allExams.push(...enhancedData.submissions.map(sub => ({
-              examName: sub.examName || 'Enhanced Exam',
-              marks: sub.score || 0,
-              totalMarks: sub.totalQuestions || 100,
-              percentage: Math.round(sub.percentage || 0),
-              date: sub.date || new Date(),
+      const fetchLocalExamResults = async (userId) => {
+        try {
+          // Use local server for exam results
+          const response = await fetch(`http://localhost:5000/api/dashboard?userId=${userId}`);
+          if (response.ok) {
+            const data = await response.json();
+            return data.results.map(result => ({
+              examName: result.examName || 'Enhanced Exam',
+              marks: result.score,
+              totalMarks: result.totalQuestions,
+              percentage: result.percentage,
+              date: result.timestamp,
               type: 'enhanced',
-              subject: sub.subject || 'General'
-            })));
+              subject: result.subject || 'General'
+            }));
           }
-        } else {
-          console.warn(`Enhanced exam history fetch failed: Status ${enhancedResponse.status} - ${enhancedResponse.statusText}`);
+          console.warn(`Local exam results fetch failed: Status ${response.status}`);
+        } catch (error) {
+          console.warn("Local exam results fetch failed:", error);
         }
-      } catch (enhancedError) {
-        console.warn("Enhanced exam history fetch failed:", enhancedError);
-      }
+        return [];
+      };
 
-      // Fetch traditional exam results
-      try {
-        const traditionalResponse = await API.get(`/api/exams/user/${userId}/history`);
-        if (traditionalResponse.status === 200) {
-          const traditionalData = traditionalResponse.data;
-          if (traditionalData.success && traditionalData.submissions) {
-            allExams.push(...traditionalData.submissions.map(sub => ({
-              examName: sub.examName || 'Traditional Exam',
-              marks: sub.marks || 0,
-              totalMarks: sub.totalMarks || 100,
-              percentage: Math.round((sub.marks || 0) / (sub.totalMarks || 100) * 100),
-              date: sub.date || new Date(),
-              type: 'traditional',
-              subject: sub.subject || 'General'
-            })));
+      const fetchTraditionalHistory = async (userId) => {
+        try {
+          const response = await API.get(`/api/exams/user/${userId}/history`);
+          if (response.status === 200 && response.data.success && response.data.submissions) {
+            return response.data.submissions.map(sub => ({ ...sub, type: 'traditional' }));
           }
-        } else {
-          console.warn(`Traditional exam history fetch failed: Status ${traditionalResponse.status} - ${traditionalResponse.statusText}`);
+          console.warn(`Traditional exam history fetch failed: Status ${response.status} - ${response.statusText}`);
+        } catch (error) {
+          console.warn("Traditional exam history fetch failed:", error);
         }
-      } catch (traditionalError) {
-        console.warn("Traditional exam history fetch failed:", traditionalError);
-      }
+        return [];
+      };
+
+      const fetchTopicQuizHistory = async (userId) => {
+        try {
+          const response = await API.get(`/api/topic-quiz/user/${userId}/history`);
+          if (response.status === 200 && response.data.success && response.data.results) {
+            return response.data.results.map(result => ({
+              examName: `${result.topic} Quiz (${result.difficulty})`,
+              marks: result.correctAnswers,
+              totalMarks: result.totalQuestions,
+              percentage: result.percentage,
+              date: result.date || new Date(),
+              type: 'topic-quiz',
+              subject: result.topic
+            }));
+          }
+          console.warn(`Topic quiz history fetch failed: Status ${response.status} - ${response.statusText}`);
+        } catch (error) {
+          console.warn("Topic quiz history fetch failed:", error);
+        }
+        return [];
+      };
+
+      const [enhancedResults, traditionalResults, topicQuizResults, localResults] = await Promise.all([
+        fetchEnhancedHistory(userId),
+        fetchTraditionalHistory(userId),
+        fetchTopicQuizHistory(userId),
+        fetchLocalExamResults(userId)
+      ]);
+
+      const allExams = [
+        ...enhancedResults.map(sub => ({
+          examName: sub.examName || 'Enhanced Exam',
+          marks: sub.score || 0,
+          totalMarks: sub.totalQuestions || 100,
+          percentage: Math.round(sub.percentage || 0),
+          date: sub.date || new Date(),
+          type: 'enhanced',
+          subject: sub.subject || 'General'
+        })),
+        ...traditionalResults.map(sub => ({
+          examName: sub.examName || 'Traditional Exam',
+          marks: sub.marks || 0,
+          totalMarks: sub.totalMarks || 100,
+          percentage: Math.round(((sub.marks || 0) / (sub.totalMarks || 100)) * 100),
+          date: sub.date || new Date(),
+          type: 'traditional',
+          subject: sub.subject || 'General'
+        })),
+        ...topicQuizResults.map(sub => ({
+          examName: sub.examName || 'Topic Quiz',
+          marks: sub.marks || 0,
+          totalMarks: sub.totalMarks || 100,
+          percentage: Math.round(((sub.marks || 0) / (sub.totalMarks || 100)) * 100),
+          date: sub.date || new Date(),
+          type: 'topic-quiz',
+          subject: sub.subject || 'General'
+        })),
+        ...localResults,
+      ];
 
       // Also include any marks from user profile
       const profileMarks = user.marks || user.user?.marks || [];

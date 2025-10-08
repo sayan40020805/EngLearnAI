@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import API from "../utils/api";
+import useAuth from '../hooks/useAuth';
+import API from '../utils/api';
 import '../styles/EnhancedExamPage.css';
 
 export default function EnhancedExamPage() {
+  const { user } = useAuth();
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState('');
   const [customSubject, setCustomSubject] = useState('');
-  const [subjectMode, setSubjectMode] = useState('select'); // 'select' or 'custom'
+  const [subjectMode, setSubjectMode] = useState('select');
   const [questionCount, setQuestionCount] = useState(10);
   const [difficulty, setDifficulty] = useState('medium');
   const [exam, setExam] = useState(null);
@@ -20,18 +22,16 @@ export default function EnhancedExamPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const response = await API.get('/api/enhanced-exams/subjects');
+        setSubjects(response.data.subjects || []);
+      } catch (err) {
+        console.error('Failed to fetch subjects', err);
+      }
+    };
     fetchSubjects();
   }, []);
-
-  const fetchSubjects = async () => {
-    try {
-      const response = await API.get("/api/enhanced-exams/subjects");
-      setSubjects(response.data.subjects || []);
-    } catch (error) {
-      console.error('Error fetching subjects:', error);
-      setSubjects([]);
-    }
-  };
 
   const generateExam = async () => {
     const subjectToUse = subjectMode === 'select' ? selectedSubject : customSubject.trim();
@@ -44,29 +44,44 @@ export default function EnhancedExamPage() {
     setError(null);
 
     try {
-      const response = await API.post("/api/enhanced-exams/generate", {
+      const payload = {
         subject: subjectToUse,
-        questionCount: parseInt(questionCount),
-        difficulty: difficulty
-      });
+        questionCount,
+        difficulty,
+      };
 
-      const data = response.data;
-      
-      if (!data.exam || !data.exam.questions) {
-        throw new Error('Invalid exam data received');
+      const response = await API.post('/api/enhanced-exams/generate', payload);
+
+      const examData = response.data?.exam;
+      const questions = examData?.questions;
+
+      if (!Array.isArray(questions)) {
+        throw new Error("Invalid response format from the server. Expected an array of questions.");
       }
 
-      setExam(data.exam);
+      // Assign IDs
+      const questionsWithId = questions.map((q, i) => ({
+        ...q,
+        _id: q._id || `q${i + 1}`,
+        question: q.question,
+        options: q.options,
+        correctAnswer: q.correctAnswer, // Ensure these fields exist in the API response
+        explanation: q.explanation,     // Ensure these fields exist in the API response
+      }));
+
+      setExam({ ...examData, questions: questionsWithId });
       setExamStarted(true);
       setCurrentQuestion(0);
       setAnswers({});
-    } catch (error) {
-      console.error('Error generating exam:', error);
-      setError(error.message || 'Failed to generate exam. Please try again.');
-    } finally {
+      setLoading(false);
+    } catch (err) {
+      console.error('Error generating exam:', err);
+      setError(err.message || 'Failed to generate quiz. Please try again or change topic.');
       setLoading(false);
     }
   };
+
+
 
   const handleAnswerSelect = (questionIndex, answer) => {
     setAnswers(prev => ({
@@ -88,46 +103,39 @@ export default function EnhancedExamPage() {
   };
 
   const submitExam = async () => {
-    if (Object.keys(answers).length !== exam.questions.length) {
-      const confirmSubmit = window.confirm(
-        `You have answered ${Object.keys(answers).length} out of ${exam.questions.length} questions. Do you want to submit anyway?`
-      );
-      if (!confirmSubmit) return;
-    }
+    const userId = user?._id || user?.user?._id || user?.id;
+
+    const answersPayload = Object.keys(answers).map(questionIndex => ({
+      questionId: exam.questions[questionIndex]._id,
+      answer: answers[questionIndex]
+    }));
+
+    const resultPayload = {
+      userId,
+      examId: exam.id || exam._id,
+      answers: answersPayload
+    };
 
     setLoading(true);
-    setError(null);
-    
     try {
-      const storedUser = localStorage.getItem('user');
-      let userId = 'guest';
-      if (storedUser) {
-        try {
-          const parsedUser = JSON.parse(storedUser);
-          userId = parsedUser._id || parsedUser.id || 'guest';
-        } catch {
-          userId = 'guest';
-        }
-      }
-      const response = await API.post("/api/enhanced-exams/submit-and-score", {
-        userId: userId,
-        examId: exam.id || exam._id,
-        answers: Object.keys(answers).map(index => ({
-          questionId: exam.questions[parseInt(index)]._id,
-          answer: answers[index]
-        }))
+      const response = await API.post('/api/enhanced-exams/submit-and-score', resultPayload);
+      const { score, totalQuestions, percentage, results: detailedResults } = response.data;
+
+      const safeDetailedResults = Array.isArray(detailedResults) ? detailedResults : [];
+
+      setResults({
+        score,
+        totalQuestions,
+        percentage,
+        results: safeDetailedResults
       });
 
-      const data = response.data;
-      
-      setResults(data);
+      // Dispatch event to refresh dashboard
+      window.dispatchEvent(new Event('examSubmitted'));
       setExamStarted(false);
-      
-      // Trigger dashboard refresh
-      window.dispatchEvent(new CustomEvent('examSubmitted'));
-    } catch (error) {
-      console.error('Error submitting exam:', error);
-      setError(error.message || 'Failed to submit exam. Please try again.');
+    } catch (err) {
+      console.error('Failed to submit exam', err);
+      setError(err.response?.data?.error || 'Failed to submit exam.');
     } finally {
       setLoading(false);
     }
@@ -149,17 +157,16 @@ export default function EnhancedExamPage() {
           <h2>Exam Results</h2>
           <div className="score-display">
             <h3>Your Score: {results.percentage}%</h3>
-            <p>{results.score} out of {results.totalQuestions} questions correct</p>
+            <p>{results.score} out of {results.totalQuestions} correct</p>
           </div>
-          
+
           <div className="results-details">
-            {results.results.map((result, index) => (
-              <div key={index} className={`result-item ${result.isCorrect ? 'correct' : 'incorrect'}`}>
-                <h4>Question {index + 1}</h4>
-                <p>{result.question}</p>
-                <p><strong>Your Answer:</strong> {result.userAnswer}</p>
-                <p><strong>Correct Answer:</strong> {result.correctAnswer}</p>
-                {!result.isCorrect && <p><strong>Explanation:</strong> {result.explanation}</p>}
+            {Array.isArray(results.results) && results.results.map((r, i) => (
+              <div key={i} className={`result-item ${r.isCorrect ? 'correct' : 'incorrect'}`}>
+                <h4>Q{i + 1}. {r.question}</h4>
+                <p><strong>Your Answer:</strong> {r.userAnswer || 'Not Answered'}</p>
+                <p><strong>Correct:</strong> {r.correctAnswer}</p>
+                {!r.isCorrect && <p><strong>Explanation:</strong> {r.explanation}</p>}
               </div>
             ))}
           </div>
@@ -178,24 +185,23 @@ export default function EnhancedExamPage() {
       <div className="exam-container">
         <div className="exam-setup">
           <h2>Generate Your Custom Exam</h2>
-          
+
           {error && (
-            <div className="error-message" style={{color: 'red', marginBottom: '1rem'}}>
+            <div className="error-message" style={{color: 'red', whiteSpace: 'pre-wrap'}}>
               {error}
             </div>
           )}
-          
+
           <div className="form-group">
-            <label>Subject Selection Mode:</label>
-            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <label>Subject Mode:</label>
+            <div style={{ display: 'flex', gap: '1rem' }}>
               <label>
                 <input
                   type="radio"
                   value="select"
                   checked={subjectMode === 'select'}
                   onChange={(e) => setSubjectMode(e.target.value)}
-                />
-                Select from list
+                /> Select
               </label>
               <label>
                 <input
@@ -203,8 +209,7 @@ export default function EnhancedExamPage() {
                   value="custom"
                   checked={subjectMode === 'custom'}
                   onChange={(e) => setSubjectMode(e.target.value)}
-                />
-                Enter custom subject
+                /> Custom
               </label>
             </div>
           </div>
@@ -214,18 +219,11 @@ export default function EnhancedExamPage() {
               <label>Select Subject:</label>
               <select
                 value={selectedSubject}
-                onChange={(e) => {
-                  setSelectedSubject(e.target.value);
-                  setError(null);
-                }}
+                onChange={(e) => setSelectedSubject(e.target.value)}
                 className="form-control"
               >
                 <option value="">Choose a subject</option>
-                {subjects.map(subject => (
-                  <option key={subject} value={subject}>
-                    {subject}
-                  </option>
-                ))}
+                {subjects.map(s => <option key={s}>{s}</option>)}
               </select>
             </div>
           ) : (
@@ -234,10 +232,7 @@ export default function EnhancedExamPage() {
               <input
                 type="text"
                 value={customSubject}
-                onChange={(e) => {
-                  setCustomSubject(e.target.value);
-                  setError(null);
-                }}
+                onChange={(e) => setCustomSubject(e.target.value)}
                 className="form-control"
                 placeholder="e.g., Artificial Intelligence"
               />
@@ -246,22 +241,19 @@ export default function EnhancedExamPage() {
 
           <div className="form-group">
             <label>Number of Questions:</label>
-            <select 
-              value={questionCount} 
-              onChange={(e) => setQuestionCount(e.target.value)}
+            <select
+              value={questionCount}
+              onChange={(e) => setQuestionCount(parseInt(e.target.value, 10))}
               className="form-control"
             >
-              <option value={5}>5 Questions</option>
-              <option value={10}>10 Questions</option>
-              <option value={15}>15 Questions</option>
-              <option value={20}>20 Questions</option>
+              {[5, 10, 15, 20].map(n => <option key={n} value={n}>{n} Questions</option>)}
             </select>
           </div>
 
           <div className="form-group">
             <label>Difficulty Level:</label>
-            <select 
-              value={difficulty} 
+            <select
+              value={difficulty}
               onChange={(e) => setDifficulty(e.target.value)}
               className="form-control"
             >
@@ -273,7 +265,7 @@ export default function EnhancedExamPage() {
 
           <button
             onClick={generateExam}
-            disabled={loading || !(subjectMode === 'select' ? selectedSubject : customSubject.trim())}
+            disabled={loading}
             className="btn-primary"
           >
             {loading ? 'Generating...' : 'Generate Exam'}
@@ -288,10 +280,7 @@ export default function EnhancedExamPage() {
       <div className="exam-container">
         <div className="error-message">
           <h2>Error Loading Exam</h2>
-          <p>Unable to load exam questions. Please try again.</p>
-          <button onClick={restartExam} className="btn-primary">
-            Try Again
-          </button>
+          <button onClick={restartExam} className="btn-primary">Try Again</button>
         </div>
       </div>
     );
@@ -299,61 +288,34 @@ export default function EnhancedExamPage() {
 
   return (
     <div className="exam-container">
-      {/* Removed exam-progress section with progress bar */}
-      {/* <div className="exam-progress">
-        <div className="progress-bar">
-          <div 
-            className="progress-fill" 
-            style={{ width: `${((currentQuestion + 1) / exam.questions.length) * 100}%` }}
-          ></div>
-        </div>
-        <p>Question {currentQuestion + 1} of {exam.questions.length}</p>
-      </div> */}
-
       <div className="exam-question">
         <h3>{exam.questions[currentQuestion]?.question}</h3>
-        
         <div className="options">
-          {exam.questions[currentQuestion]?.options?.map((option, index) => (
-            <div key={index} className="option">
-              <label>
-                <input
-                  type="radio"
-                  name={`question-${currentQuestion}`}
-                  value={String.fromCharCode(65 + index)} // A, B, C, D
-                  checked={answers[currentQuestion] === String.fromCharCode(65 + index)}
-                  onChange={(e) => handleAnswerSelect(currentQuestion, e.target.value)}
-                />
-                <span>{option}</span>
-              </label>
-            </div>
-          ))}
+          {exam.questions[currentQuestion]?.options?.map((opt, i) => {
+            const letter = String.fromCharCode(65 + i);
+            return (
+              <div key={i} className="option">
+                <label>
+                  <input
+                    type="radio"
+                    name={`question-${currentQuestion}`}
+                    value={letter}
+                    checked={answers[currentQuestion] === letter}
+                    onChange={(e) => handleAnswerSelect(currentQuestion, e.target.value)}
+                  />
+                  <span>{letter}) {opt}</span>
+                </label>
+              </div>
+            );
+          })}
         </div>
 
         <div className="navigation-buttons">
-          <button 
-            onClick={handlePreviousQuestion} 
-            disabled={currentQuestion === 0}
-            className="btn-secondary"
-          >
-            Previous
-          </button>
-          
+          <button onClick={handlePreviousQuestion} disabled={currentQuestion === 0} className="btn-secondary">Previous</button>
           {currentQuestion === exam.questions.length - 1 ? (
-            <button 
-              onClick={submitExam} 
-              disabled={loading}
-              className="btn-primary"
-            >
-              {loading ? 'Submitting...' : 'Submit Exam'}
-            </button>
+            <button onClick={submitExam} disabled={loading} className="btn-primary">{loading ? 'Submitting...' : 'Submit'}</button>
           ) : (
-            <button 
-              onClick={handleNextQuestion}
-              className="btn-primary"
-            >
-              Next
-            </button>
+            <button onClick={handleNextQuestion} className="btn-primary">Next</button>
           )}
         </div>
       </div>

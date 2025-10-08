@@ -1,25 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import API from "../utils/api";
 import './TopicQuizPage.css';
 
 const TopicQuizPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { quizData } = location.state || {};
-  
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [timeLeft, setTimeLeft] = useState(0);
   const [quizStarted, setQuizStarted] = useState(false);
   const [quizFinished, setQuizFinished] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!quizData) {
       navigate('/');
       return;
     }
-    
+
     // Convert total time from minutes to seconds
     setTimeLeft(quizData.totalTime * 60);
   }, [quizData, navigate]);
@@ -66,9 +69,58 @@ const TopicQuizPage = () => {
     }
   };
 
-  const handleSubmitQuiz = () => {
-    setQuizFinished(true);
-    setShowResults(true);
+  const handleSubmitQuiz = async () => {
+    setLoading(true);
+    setError('');
+
+    try {
+      const storedUser = localStorage.getItem('user');
+      let userId;
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          userId = parsedUser?._id || parsedUser?.id;
+        } catch (e) {
+          console.error("Failed to parse user from localStorage", e);
+        }
+      }
+
+      const score = calculateScore();
+      const percentage = Math.round((score / quizData.questions.length) * 100);
+
+      // Save quiz results to backend
+      const response = await API.post("/api/topic-quiz/save-result", {
+        userId: userId || 'guest',
+        topic: quizData.topic,
+        difficulty: quizData.difficulty || 'medium',
+        totalQuestions: quizData.questions.length,
+        correctAnswers: score,
+        percentage: percentage,
+        answers: Object.keys(selectedAnswers).map(index => ({
+          questionIndex: parseInt(index),
+          selectedAnswer: selectedAnswers[index],
+          correctAnswer: quizData.questions[parseInt(index)].correctAnswer
+        }))
+      });
+
+      if (response.data.success) {
+        setQuizFinished(true);
+        setShowResults(true);
+
+        // Trigger dashboard refresh
+        window.dispatchEvent(new CustomEvent('examSubmitted'));
+      } else {
+        setError('Failed to save quiz results. Please try again.');
+      }
+    } catch (err) {
+      console.error('Error saving quiz results:', err);
+      setError(err.message || 'Failed to save quiz results. Please try again.');
+      // Still show results even if saving failed
+      setQuizFinished(true);
+      setShowResults(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const calculateScore = () => {
@@ -95,7 +147,7 @@ const TopicQuizPage = () => {
         <div className="score-display">
           <h3>Your Score: {score}/{quizData.questions.length} ({percentage}%)</h3>
         </div>
-        
+
         <div className="results-breakdown">
           {quizData.questions.map((question, index) => (
             <div key={index} className="result-item">
@@ -106,10 +158,15 @@ const TopicQuizPage = () => {
             </div>
           ))}
         </div>
-        
-        <button onClick={() => navigate('/topic-quiz-generator')} className="retry-btn">
-          Try Another Quiz
-        </button>
+
+        <div className="action-buttons">
+          <button onClick={() => navigate('/topic-quiz-generator')} className="retry-btn">
+            Try Another Quiz
+          </button>
+          <button onClick={() => navigate('/dashboard')} className="dashboard-btn">
+            View Dashboard
+          </button>
+        </div>
       </div>
     );
   }
@@ -120,6 +177,7 @@ const TopicQuizPage = () => {
         <h2>Topic: {quizData.topic}</h2>
         <div className="quiz-info">
           <p>Questions: {quizData.totalQuestions}</p>
+          <p>Difficulty: {quizData.difficulty || 'Medium'}</p>
           <p>Total Time: {quizData.totalTime} minutes</p>
           <p>Time per Question: {quizData.timePerQuestion} minutes</p>
         </div>
@@ -144,7 +202,7 @@ const TopicQuizPage = () => {
 
       <div className="question-container">
         <h3>{currentQuestion.question}</h3>
-        
+
         <div className="options">
           {currentQuestion.options.map((option, index) => (
             <label key={index} className="option">
@@ -161,17 +219,17 @@ const TopicQuizPage = () => {
         </div>
 
         <div className="navigation">
-          <button 
-            onClick={handlePreviousQuestion} 
+          <button
+            onClick={handlePreviousQuestion}
             disabled={currentQuestionIndex === 0}
             className="nav-btn"
           >
             Previous
           </button>
-          
+
           {currentQuestionIndex === quizData.questions.length - 1 ? (
-            <button onClick={handleSubmitQuiz} className="submit-btn">
-              Submit Quiz
+            <button onClick={handleSubmitQuiz} disabled={loading} className="submit-btn">
+              {loading ? 'Submitting...' : 'Submit Quiz'}
             </button>
           ) : (
             <button onClick={handleNextQuestion} className="nav-btn">
@@ -179,6 +237,8 @@ const TopicQuizPage = () => {
             </button>
           )}
         </div>
+
+        {error && <div className="error-message">{error}</div>}
       </div>
     </div>
   );

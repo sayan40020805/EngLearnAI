@@ -8,7 +8,7 @@ export default defineConfig({
     port: 5176,
     proxy: {
       '/api': {
-        target: 'https://gemini-backend-1-gq8i.onrender.com/api',
+        target: 'https://deepseek-backend-1-gq8i.onrender.com/api',
         changeOrigin: true,
         secure: true,
       },

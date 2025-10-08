@@ -122,18 +122,11 @@ export default function EnhancedExamPage() {
       const { score, totalQuestions, percentage, results: detailedResults } = response.data;
 
       setResults({
-      score: correct,
-      totalQuestions: exam.questions.length,
-      percentage,
-      results: detailedResults
-    };
-
-    setResults({
         score,
         totalQuestions,
-      percentage,
-      results: detailedResults
-    });
+        percentage,
+        results: detailedResults
+      });
 
       // Dispatch event to refresh dashboard
       window.dispatchEvent(new Event('examSubmitted'));
